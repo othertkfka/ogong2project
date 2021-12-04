@@ -1,0 +1,187 @@
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="com.ogong.service.banana.BananaMapper">
+	
+	
+	<resultMap id="BananaSelectMap" type="banana">
+		<result property="bananaNo"        		 column="BANANA_INFO_NO"       jdbcType="NUMERIC"/>
+		<result property="bananaEmail.email"     column="BANANA_EMAIL"         jdbcType="VARCHAR"/>
+		<result property="bananaAmount"      	 column="BANANA_AMOUNT"        jdbcType="NUMERIC"/>
+		<result property="bananaHistoryDate"	 column="BANANA_HISTORY_DATE"  jdbcType="DATE"/>
+		<result property="bananaHistory"    	 column="BANANA_HISTORY"       jdbcType="VARCHAR"/>
+		<result property="bananaCategory"	 	 column="BANANA_CATEGORY"	   jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<resultMap id="UserSelectMap" type="user">
+		<result property="email"						 column="EMAIL"				 jdbcType="VARCHAR"/>
+		<result property="role"						 	 column="ROLE"				 jdbcType="VARCHAR"/>
+		<result property="condition"					 column="CONDITION"			 jdbcType="VARCHAR"/>
+		<result property="nickname"					   	 column="NICKNAME"			 jdbcType="VARCHAR"/>
+		<result property="name"					   	 	 column="NAME"				 jdbcType="VARCHAR"/>
+		<result property="birth"					   	 column="BIRTH"				 jdbcType="VARCHAR"/>
+		<result property="userImage"					 column="USER_IMAGE"		 jdbcType="VARCHAR"/>
+		<result property="gender"					 	 column="GENDER"			 jdbcType="VARCHAR"/>
+		<result property="goal"					 		 column="GOAL"				 jdbcType="VARCHAR"/>
+		<result property="withdrawDate"					 column="WITHDRAW_DATE"		 jdbcType="VARCHAR"/>
+		<result property="withdrawReason"				 column="WITHDRAW_REASON"	 jdbcType="VARCHAR"/>
+		<result property="restoreDate"					 column="RESTORE_DATE"		 jdbcType="VARCHAR"/>
+		<result property="restoreReason"				 column="RESTORE_REASON"	 jdbcType="VARCHAR"/>
+		<result property="userTargetTime"				 column="USER_TARGET_TIME"	 jdbcType="NUMERIC"/>
+		<result property="regDate"						 column="REG_DATE"			 jdbcType="VARCHAR"/>
+		<result property="suspendStartDate"				 column="SUSPEND_START_DATE" jdbcType="VARCHAR"/>
+		<result property="suspendEndDate"				 column="SUSPEND_END_DATE"   jdbcType="VARCHAR"/>
+		<result property="bananaCount"				 	 column="BANANA_COUNT"   	 jdbcType="NUMERIC"/>
+		<result property="studyInterest1"				 column="STUDY_INTEREST1" 	 jdbcType="VARCHAR"/>
+		<result property="studyInterest2"				 column="STUDY_INTEREST2"    jdbcType="VARCHAR"/>
+		<result property="studyInterest3"				 column="STUDY_INTEREST3"    jdbcType="VARCHAR"/>
+	</resultMap>	
+	
+	<!-- 회원 상세보기 -->
+	<select id="adminGetUser"	parameterType="string"	resultMap="UserSelectMap">
+		SELECT
+		email,
+		role,
+		name,
+		TO_CHAR(birth,'YYYY-MM-DD') birth,
+		user_image,
+		gender,
+		goal, 
+		condition, 
+		nickname, 
+		TO_CHAR(withdraw_date,'YYYY-MM-DD') withdraw_date, 
+		withdraw_reason, 
+		TO_CHAR(restore_date,'YYYY-MM-DD') restore_date,
+		restore_reason,
+		user_target_time, 
+		TO_CHAR(reg_date,'YYYY-MM-DD') reg_date,
+		TO_CHAR(suspend_start_date,'YYYY-MM-DD') suspend_start_date,
+		TO_CHAR(suspend_end_date,'YYYY-MM-DD') suspend_end_date,
+		banana_count,
+		study_interest1,
+		study_interest2,
+		study_interest3
+		FROM users
+		WHERE email = #{value}
+		
+		
+	</select>
+	
+	
+	<!-- 바나나 인서트 -->
+	<insert id="addBanana"	parameterType="banana" useGeneratedKeys="true" keyColumn="banana_info_no" keyProperty="bananaNo">
+		INSERT
+		INTO BANANA_INFO (banana_info_no
+					,banana_email
+					,banana_amount
+					,banana_history_date
+					,banana_history
+					,banana_category)
+			VALUES	(seq_banana_info_no.nextVal
+					,#{bananaEmail.email:VARCHAR}
+					,#{bananaAmount:NUMERIC}
+					,SYSDATE
+					,#{bananaHistory:VARCHAR}
+					,#{bananaCategory:VARCHAR}
+					)
+	</insert>
+	
+	<select id="getlistBanana" parameterType="hashmap" resultMap="BananaSelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT 
+			   inner_table.* , ROWNUM AS row_seq
+						FROM		( SELECT b.banana_info_no,
+											 b.banana_email,
+											 b.banana_history,
+											 TO_CHAR(b.banana_history_date,'YYYY-MM-DD HH24:MI:SS') banana_history_date,
+											 b.banana_amount,
+											 b.banana_category,
+											 u.banana_count
+											 FROM users u, banana_info b
+										  	 WHERE u.email = b.banana_email
+											 AND  b.banana_email = #{banana.bananaEmail.email}
+											 ORDER BY banana_history_date DESC
+											 ) inner_table
+						   				WHERE ROWNUM &lt;= #{search.endRowNum}) outer_table
+									WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum}
+	</select>
+	
+	
+<!-- 	<select id="getlistUseBanana" parameterType="hashmap" resultMap="BananaSelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT 
+			   inner_table.* , ROWNUM AS row_seq
+						FROM		( SELECT b.banana_email,
+											 b.banana_history,
+											 TO_CHAR(b.banana_history_date,'YYYY-MM-DD') banana_history_date,
+											 b.banana_amount,
+											 b.banana_category
+											 FROM users u, banana_info b
+										  	 WHERE u.email = b.banana_email
+											 AND    b.banana_category = 2
+											 AND  b.banana_email = #{banana.bananaEmail.email}
+											  ) inner_table
+						   				WHERE ROWNUM &lt;= #{search.endRowNum}) outer_table
+									WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum}
+	</select>	 -->
+	
+
+	<update id="updateAcquireBanana" parameterType="user">
+		UPDATE users
+		
+		SET	banana_count = BANANA_COUNT + #{bananaCount:NUMERIC}
+		
+		WHERE email = #{email:VARCHAR}
+	</update>	
+	
+	<update id="updateUseBanana" parameterType="user">
+		UPDATE users
+		<set>
+			banana_count = banana_count - #{bananaCount:NUMERIC}
+		</set>
+		WHERE email = #{email:VARCHAR}
+	</update>
+	
+	<delete id="deleteBanana" parameterType="int">
+		DELETE
+		FROM banana_info
+		WHERE banana_info_no = #{value}
+	</delete>	
+	
+	
+	<select id="getbananaCount"		parameterType="hashmap"		resultType="int">
+		SELECT COUNT(*)
+						FROM		( SELECT b.banana_info_no,
+											 b.banana_email,
+											 b.banana_history,
+											 TO_CHAR(b.banana_history_date,'YYYY-MM-DD') banana_history_date,
+											 b.banana_amount,
+											 b.banana_category,
+											 u.banana_count											 
+											 FROM users u, banana_info b
+										  	 WHERE u.email = b.banana_email
+											 AND  b.banana_email = #{banana.bananaEmail.email}
+											 
+											 ) countTable
+	</select>	
+	
+<!-- 	<select id="getUseCount"		parameterType="hashmap"		resultType="int">
+		SELECT COUNT(*)
+						FROM		( SELECT b.banana_email,
+											 b.banana_history,
+											 TO_CHAR(b.banana_history_date,'YYYY-MM-DD') banana_history_date,
+											 b.banana_amount,
+											 b.banana_category
+											 FROM users u, banana_info b
+										  	 WHERE u.email = b.banana_email
+											 AND    b.banana_category = 2
+											 AND  b.banana_email = #{banana.bananaEmail.email}
+											 ) countTable
+	</select>	 -->
+	
+	
+	
+</mapper>
+
+

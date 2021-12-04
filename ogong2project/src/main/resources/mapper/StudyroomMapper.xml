@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ogong.service.studyroom.StudyroomMapper">
+ 	
+	<resultMap id="gsmSelectMap" type="groupStudyMember">
+		<result property="groupStudyMemberNo" 		column="groupstudy_member_no" 		jdbcType="NUMERIC"/>
+		<result property="study.studyNo"			column="study_no" 					jdbcType="NUMERIC" />
+		<result property="member.email" 			column="email" 						jdbcType="VARCHAR" />
+		<result property="member.nickname" 			column="nickname" 					jdbcType="VARCHAR" />
+		<result property="studyRole" 				column="studyrole" 				jdbcType="VARCHAR" />
+		<result property="diligenceScore" 			column="diligence_score" 			jdbcType="NUMERIC" />
+		<result property="participationScore" 		column="participation_score" 		jdbcType="NUMERIC" />
+		<result property="participationReason" 		column="participation_reason" 		jdbcType="VARCHAR" />
+		<result property="determination" 			column="determination" 				jdbcType="VARCHAR" />
+		<result property="approvalFlag" 			column="approval_flag" 				jdbcType="CHAR"  />
+		<result property="attendanceRate" 			column="attendance_rate" 			jdbcType="NUMERIC"  />
+	</resultMap>
+	
+	<resultMap id="calendarSelectMap" type="calendar">
+		<result property="calendarNo" 				column="calendar_no" 				jdbcType="NUMERIC"/>
+		<result property="study.studyNo"			column="study_no" 					jdbcType="NUMERIC" />
+		<result property="calendarTitle" 			column="calendar_title" 			jdbcType="VARCHAR" />
+		<result property="calendarContents" 		column="calendar_contents" 			jdbcType="VARCHAR" />
+		<result property="calendarStartDate" 		column="calendar_start_date" 		jdbcType="DATE" />
+		<result property="calendarEndDate" 			column="calendar_end_date" 			jdbcType="DATE" />
+		<result property="calendarColor" 			column="calendar_color" 			jdbcType="VARCHAR" />
+		
+	</resultMap>
+	
+	
+	
+	<select	id="getParticipationList"	parameterType="int"		resultMap="gsmSelectMap">
+		
+		SELECT
+			g.groupstudy_member_no,
+			g.study_no, 
+			g.email, 
+			g.participation_reason, 
+			g.determination, 
+			g.approval_flag,
+			u.nickname
+		FROM
+			groupstudy_member g, users u
+		WHERE
+			g.email = u.email
+		AND NVL(g.studyrole,'0') in ('2','0')
+		AND	study_no = #{studyNo}
+		ORDER BY g.groupstudy_member_no
+		
+	</select>
+	
+	<select id="getTotalCount"		parameterType="int"		resultType="int">
+	
+		SELECT COUNT(*)
+		FROM ( 	SELECT
+			g.groupstudy_member_no,
+			g.study_no, 
+			g.email, 
+			g.participation_reason, 
+			g.determination, 
+			g.approval_flag,
+			u.nickname
+		FROM
+			groupstudy_member g, users u
+		WHERE
+			g.email = u.email
+		AND NVL(g.studyrole,'0') in ('2','0')
+		AND	study_no = #{studyNo}) count_table
+	
+	</select>
+	 
+	 <update id="applyParticipation"	parameterType="string">
+	 
+	 	UPDATE
+			groupstudy_member
+		SET
+			approval_flag = '1',
+			studyrole = '2'
+		WHERE
+			email = #{value}
+	 
+	 </update>
+	 
+	 <update id ="updateMember"	parameterType="int">
+	 	UPDATE
+	 		study
+	 	SET
+	 		current_member = current_member+1
+		WHERE
+			study_no = ${value}	 
+	 </update>
+	 
+	 <delete id="rejectParticipation"	parameterType="string">
+	 	DELETE
+	 		groupstudy_member
+	 	WHERE
+	 		email = #{value}
+	 </delete>
+	 
+	 <select	id="getGSMemberList"	parameterType="int"	resultMap="gsmSelectMap">
+	 
+	 	SELECT
+         g.groupstudy_member_no,
+         g.study_no,
+         g.email,
+         g.studyrole,
+         g.determination,
+         u.nickname,
+         s.study_end_date-s.study_start_date,
+         TRUNC((count.c/TRUNC(((SYSDATE+1)-s.study_start_date)))*100,1) attendance_rate
+      FROM groupstudy_member g, users u, study s, 
+         (select ag.email, ag.study_no, count(a.attendance_date) c
+                FROM attendance a, groupstudy_member ag
+                WHERE
+                    a.email(+)= ag.email
+                AND 
+                    a.study_no(+) = ag.study_no
+                AND 
+                    ag.study_no = #{value}
+                GROUP BY 
+                   ag.email, ag.study_no) count      
+      WHERE g.email = u.email
+      AND g.studyrole is not null
+      AND g.email = count.email
+      AND g.study_no = count.study_no
+      AND g.study_no = s.study_no
+      AND g.study_no = #{value}
+
+	 
+	 </select>
+	 
+	 <select	id="getGSMember"	parameterType="groupStudyMember"	resultMap="gsmSelectMap">
+	 	SELECT
+	 		*
+	 	FROM
+	 		groupstudy_member
+	 	WHERE
+	 		study_no = #{study.studyNo}
+	 	AND email= #{member.email}
+	 </select>
+	 
+	 <update id="updateStudy"	parameterType="study">
+	 
+	 	UPDATE study
+		SET
+			study_name = #{studyName},
+			study_thumbnail = #{studyThumbnail:VARCHAR},
+			selfstudy_rule = #{selfStudyRule:VARCHAR},
+			groupstudy_info = #{groupStudyInfo:VARCHAR},
+			groupstudy_plan = #{groupStudyPlan:VARCHAR},
+			groupstudy_condition = #{groupStudyCondition:VARCHAR}
+		WHERE
+			study_no = #{studyNo}
+	 
+	 </update>
+	 
+	 <insert id="addAttendance"		parameterType="map">
+	 	INSERT
+	 	INTO attendance
+	 	(
+		 	attendance_no,
+		 	study_no,
+		 	email,
+		 	attendance_date
+	 	)
+		VALUES
+		(
+			seq_attendance_no.NEXTVAL,
+			#{studyNo},
+			#{email},
+			SYSDATE
+		)
+	 </insert>
+	 
+	 <select id="checkAttendance" parameterType="map" resultType="String">
+		SELECT
+			attendance_date
+		FROM
+			attendance
+		WHERE
+			study_no= #{studyNo}
+		AND email = #{email}
+		AND TO_CHAR(attendance_date,'yyyy-mm-dd') = TO_CHAR(SYSDATE,'yyyy-mm-dd') 
+	 </select>
+ 
+	<select id="getAttendanceList"	parameterType="map"	resultType="hashmap">
+	 
+	SELECT
+		TO_CHAR(attendance_date,'yyyy-mm-dd') attendance_date
+	FROM
+    	(SELECT 
+        	a.attendance_date
+         FROM 
+            attendance a
+         WHERE
+            study_no = #{studyNo}
+         AND email = #{email}
+         ORDER BY a.attendance_date DESC
+         )
+	WHERE
+    	ROWNUM &lt;= 5
+	 </select>
+	 
+	 <insert id="addCalendar"	parameterType="calendar">
+	 	
+	 	INSERT
+		INTO calendar
+		(
+			calendar_no,
+			study_no,
+			calendar_title,
+			calendar_contents,
+			calendar_start_date,
+			calendar_end_date,
+			calendar_color
+		)
+		VALUES
+		(
+			seq_calendar_no.NEXTVAL,
+			#{study.studyNo},
+			#{calendarTitle:VARCHAR},
+			#{calendarContents:VARCHAR},
+			TO_DATE(#{calendarStartDate},'YYYY-MM-DD HH24:MI'),
+			TO_DATE(#{calendarEndDate}, 'YYYY-MM-DD HH24:MI'),
+			#{calendarColor:VARCHAR}
+		)
+	 
+	 </insert>
+	 
+	 <select id="getCalendar"	parameterType="int"		resultMap="calendarSelectMap">
+	 	SELECT
+			calendar_no,
+			study_no,
+			calendar_title,
+			calendar_contents,
+			calendar_start_date,
+			calendar_end_date,
+			calendar_color
+			FROM
+				calendar
+			WHERE
+				calendar_no = #{value}
+	 
+	 </select>
+	 
+	 <select id="getCalendarList"	parameterType="int"		resultMap="calendarSelectMap">
+	 	
+	 	SELECT
+			calendar_no,
+			study_no,
+			calendar_title,
+			calendar_contents,
+			calendar_start_date,
+			calendar_end_date,
+			calendar_color
+		FROM
+			calendar
+		WHERE
+			study_no = #{value}
+	 
+	 </select>
+	 
+	 <update id="updateCalendar"	parameterType="calendar">
+	 	UPDATE calendar
+		SET
+			calendar_title = #{calendarTitle:VARCHAR},
+			calendar_contents = #{calendarContents:VARCHAR},
+			calendar_start_date = to_date(#{calendarStartDate},'YYYY-MM-DD HH24:MI'),
+			calendar_end_date = to_date(#{calendarEndDate},'YYYY-MM-DD HH24:MI')
+		WHERE
+			calendar_no = #{calendarNo}
+	 	
+	 </update>
+	 
+	 <delete id="deleteCalendar"	parameterType="int">
+	 	DELETE
+	 		calendar
+	 	WHERE
+	 		calendar_no = #{value}
+	 </delete>
+	 
+</mapper>

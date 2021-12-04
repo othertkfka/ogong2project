@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<mapper namespace="com.ogong.service.integration.IntegrationMapper">
+	
+	 <resultMap id="MessageSelectMap" type="message">
+		<result property="messageNo" 					column="MESSAGE_NO" 		jdbcType="NUMERIC"/>
+		<result property="messageContents"				column="MESSAGE_CONTENTS"	jdbcType="VARCHAR"/>
+		<result property="sendDate"						column="SEND_DATE"			jdbcType="VARCHAR"/>
+		<result property="receiver.email"				column="RECEIVER_EMAIL"		jdbcType="VARCHAR"/>
+		<result property="sender.email"					column="SENDER_EMAIL"		jdbcType="VARCHAR"/>
+		<result property="messageCategory"				column="MESSAGE_CATEGORY"	jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="NoticeSelectMap" type="notice" >
+		<result property="noticeNo"						column="NOTICE_NO"			jdbcType="NUMERIC"/>
+		<result property="noticeCategory"				column="NOTICE_CATEGORY"	jdbcType="VARCHAR"/>
+		<result property="noticeCondition"				column="NOTICE_CONDITION"	jdbcType="VARCHAR"/>
+		<result property="noticeStudy.studyNo"			column="STUDY_NO"			jdbcType="NUMERIC"/>
+		<result property="noticeStudy.studyName"		column="STUDY_NAME"			jdbcType="VARCHAR"/>
+		<result property="noticeBoard.boardNo"			column="BOARD_NO"			jdbcType="NUMERIC"/>
+		<result property="noticeBoard.boardTitle"		column="BOARD_TITLE"		jdbcType="VARCHAR"/>
+		<result property="noticeAnswer.answerNo"		column="ANSWER_NO"			jdbcType="NUMERIC"/>
+		<result property="noticeUser.email"				column="EMAIL"				jdbcType="VARCHAR"/>
+		<result property="sender.email"					column="SENDER_EMAIL"		jdbcType="VARCHAR"/>
+		<result property="noticeGroupMember.groupStudyMemberNo"	column="GROUPSTUDY_MEMBER_NO"	jdbcType="NUMERIC"/>
+		<result property="noticeGroupMember.approvalFlag"		column="APPROVAL_FLAG"			jdbcType="VARCHAR"/>
+		<result property="noticeDate"					column="NOTICE_DATE"		jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="UserSelectMap" type="user">
+		<result property="email" 				column="email" 				jdbcType="VARCHAR"/>
+		<result property="role"					column="role" 				jdbcType="VARCHAR" />
+		<result property="condition" 			column="condition" 			jdbcType="VARCHAR" />
+		<result property="nickname" 			column="nickname" 			jdbcType="VARCHAR" />
+		<result property="password" 			column="password" 			jdbcType="VARCHAR" />
+		<result property="name" 				column="name" 				jdbcType="VARCHAR" />
+		<result property="birth" 				column="birth" 				jdbcType="DATE" />
+		<result property="gender" 				column="gender" 			jdbcType="VARCHAR"  />
+		<result property="userImage" 			column="user_image" 		jdbcType="VARCHAR" />
+		<result property="goal" 				column="goal" 				jdbcType="VARCHAR" />
+		<result property="withdrawDate" 		column="withdraw_date" 		jdbcType="DATE" />
+		<result property="withdrawReason" 		column="withdraw_reason" 	jdbcType="VARCHAR" />
+		<result property="restoreDate" 			column="restore_date" 		jdbcType="DATE" />
+		<result property="restoreReason" 		column="restore_reason" 	jdbcType="VARCHAR" />
+		<result property="diligenceRate" 		column="diligence_rate" 	jdbcType="NUMERIC" />
+		<result property="participationRate" 	column="participation_rate" jdbcType="NUMERIC" />
+		<result property="suspendStartDate" 	column="suspend_start_date" jdbcType="DATE" />
+		<result property="suspendEndDate" 		column="suspend_end_date" 	jdbcType="DATE" />
+		<result property="userTargetTime" 		column="user_target_time" 	jdbcType="NUMERIC" />
+		<result property="regDate" 				column="reg_date" 			jdbcType="DATE" />
+		<result property="bananaCount" 			column="banana_count" 		jdbcType="NUMERIC" />
+		<result property="studyInterest1" 		column="study_interest1" 	jdbcType="VARCHAR" />
+		<result property="studyInterest2" 		column="study_interest2" 	jdbcType="VARCHAR" />
+		<result property="studyInterest3" 		column="study_interest3" 	jdbcType="VARCHAR" />
+	</resultMap> 
+	
+	<resultMap id="AnswerSelectMap" type="answer">
+		<result property="answerNo"						 column="ANSWER_NO"			 jdbcType="NUMERIC"/>
+		<result property="email" 			 			 column="EMAIL" 			 jdbcType="VARCHAR"/>
+		<result property="nickname" 					 column="NICKNAME" 			 jdbcType="VARCHAR"/>
+		<result property="adoptionFlag"					 column="ADOPTION_FLAG" 	 jdbcType="VARCHAR"/>
+		<result property="adoptionCount"				 column="adoption_count" 	 jdbcType="NUMERIC"/>
+	</resultMap>
+	
+	<resultMap id="learningHistorySelectMap" type="learningHistory">
+		<result property="learningTime" 			column="learning_time" 			jdbcType="VARCHAR" />
+		<result property="email"					column="email"					jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 쪽지 보내기 (1) -->
+	<insert id="addSendMessage"		parameterType="message">
+		INSERT
+		INTO message(message_no, 
+					 receiver_email, 
+					 sender_email, 
+					 message_contents, 
+					 send_date,
+					 message_category)
+		VALUES(seq_message_no.nextVal, 
+			   #{receiver.email}, 
+			   #{sender.email}, 
+			   #{messageContents:VARCHAR}, 
+			   SYSDATE,
+			   '1')	
+	</insert>
+	
+	<!-- 쪽지 보내기 (2) -->
+	<insert id="addSendMessage2"		parameterType="message">
+		INSERT
+		INTO message(message_no, 
+					 receiver_email, 
+					 sender_email, 
+					 message_contents, 
+					 send_date,
+					 message_category)
+		VALUES(seq_message_no.nextVal, 
+			   #{receiver.email}, 
+			   #{sender.email}, 
+			   #{messageContents:VARCHAR}, 
+			   SYSDATE,
+			   '2')	
+	</insert>
+	
+	
+	
+	<!-- 받은 쪽지 목록 -->
+	<select id="getlistReceiveMessage" parameterType="hashmap"	resultMap="MessageSelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+						FROM		( SELECT message_no,
+											 message_contents,
+											 message_category,
+											 receiver_email,
+											 sender_email,
+											 TO_CHAR(send_date,'YYYY-MM-DD') send_date
+											 FROM message
+											 WHERE receiver_email = #{message.receiver.email}
+											 AND   message_category = 1	
+											 ORDER BY send_date DESC     									
+											 ) inner_table
+						   				WHERE ROWNUM &lt;= #{search.endRowNum}) outer_table
+									WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum}		
+	</select>
+	
+	<!-- 보낸 쪽지 목록 -->
+	<select id="getlistSendMessage" parameterType="hashmap"	resultMap="MessageSelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+						FROM		( SELECT message_no,
+											 message_contents,
+											 message_category,
+											 sender_email,
+											 receiver_email,
+											 TO_CHAR(send_date,'YYYY-MM-DD') send_date
+											 FROM message
+											 WHERE sender_email = #{message.sender.email}
+											 AND   message_category = 2	
+											 ORDER BY send_date	DESC      									
+											 ) inner_table
+						   				WHERE ROWNUM &lt;= #{search.endRowNum}) outer_table
+									WHERE row_seq BETWEEN #{search.startRowNum} AND #{search.endRowNum}		
+	</select>
+	
+	<!-- 쪽지 삭제 -->	
+	<delete id="deleteMessage"	parameterType="int">
+		DELETE
+		FROM message								
+		WHERE message_no = #{value} 
+	</delete>
+	
+	<!-- 쪽지 삭제 테스트 -->
+	<delete id="deleteTest" parameterType="message">
+		DELETE
+		FROM message
+		WHERE message_no = #{messageNo}
+		AND RECEIVER_EMAIL = #{receiver.email}
+	</delete>
+	
+	<!-- 바나나 랭킹 목록 -->
+	<select id="listBananaRanking" parameterType="hashmap" resultMap="UserSelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+						FROM		( SELECT 
+										      rank() over(order by banana_count DESC) as ranking
+											, email
+											, nickname
+											, banana_count
+											  FROM users
+											  WHERE banana_count is not null	      									
+											 ) inner_table
+											 
+						   				WHERE ROWNUM &lt;= 5) outer_table
+									WHERE row_seq BETWEEN 1 AND 5	 
+	</select>
+	
+	<!-- 채택수 랭킹 목록 -->
+	<select id="listChooseCountRanking" parameterType="hashmap" resultMap="AnswerSelectMap">
+		SELECT outer_table.*
+	      FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+	                  FROM      ( SELECT inner.email, inner.nickname, inner.adoption_count             
+	                              FROM (SELECT a.email, u.nickname,  COUNT(a.adoption_flag) adoption_count                 
+	                                 FROM   ANSWER a, users u           
+	                                 WHERE  adoption_flag = '1'                 
+	                                    AND   a.email = u.email                 
+	                                 GROUP BY a.email, u.nickname ) inner                 
+	                                 ORDER BY inner.adoption_count DESC
+	                                  ) inner_table
+	                                  
+	                                 WHERE ROWNUM &lt;= 5) outer_table
+	                           WHERE row_seq BETWEEN 1 AND 5    
+	</select>
+	
+	<!-- 공부시간 랭킹 목록 -->
+	<select id="listLearningTimeRanking" parameterType="hashmap" resultMap="learningHistorySelectMap">
+		SELECT outer_table.*
+		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+                FROM		( SELECT    TO_CHAR (TRUNC (NVL(total,'0') / 3600), 'fm00')
+                                   || ':'
+                                   || TO_CHAR (TRUNC (ABS (MOD (NVL(total,'0'), 3600)) / 60), 'fm00')
+                                   || ':'
+                                   || TO_CHAR (MOD (NVL(total,'0'), 60), 'fm00') learning_time, users.nickname AS email
+                                FROM (SELECT SUM (
+                                                TO_NUMBER (SUBSTR (learning_time, 1, 2)) * 60 * 60
+                                              + TO_NUMBER (SUBSTR (learning_time, 4, 2)) * 60
+                                              + TO_NUMBER (SUBSTR (learning_time, 7, 2))) TOTAL, email
+                                        FROM learning_history
+                                        GROUP BY email) a, users
+                                WHERE a.email = users.email
+                                ORDER BY total DESC) inner_table
+                                WHERE ROWNUM &lt;= 5) outer_table
+                            WHERE row_seq BETWEEN 1 AND 5	 
+	</select>
+	
+	<!-- 알림 도착 -->
+	<insert id="addNotice"	parameterType="notice">
+		INSERT INTO notice
+				(notice_no,
+				 study_no,
+				 board_no,
+				 answer_no,
+				 groupstudy_member_no,
+				 email,
+				 sender_email,
+				 notice_category,
+				 board_title,
+				 study_name,
+				 approval_flag,
+				 notice_condition,
+				 notice_date)
+		VALUES   (seq_notice_no.nextVal,
+				  #{noticeStudy.studyNo:NUMERIC},
+				  #{noticeBoard.boardNo:NUMERIC},
+				  #{noticeAnswer.answerNo:NUMERIC},
+				  #{noticeGroupMember.groupStudyMemberNo:NUMERIC},
+				  #{noticeUser.email:VARCHAR},
+				  #{sender.email:VARCHAR},
+				  #{noticeCategory:VARCHAR},
+				  #{noticeBoard.boardTitle:VARCHAR},
+				  #{noticeStudy.studyName:VARCHAR},
+				  #{noticeGroupMember.approvalFlag:VARCHAR},
+				  #{noticeCondition:VARCHAR},
+				  SYSDATE				  
+				  )
+	</insert>
+	
+	<!-- 알림 목록 -->
+	<select id="getlistNotice" parameterType="string" resultMap="NoticeSelectMap">
+		SELECT 
+		notice_no, 
+		notice_category,
+		TO_CHAR(notice_date, 'YYYY-MM-DD HH24:MI:SS') notice_date,
+		board_no,
+		board_title, 
+		study_no,
+		study_name, 
+		approval_flag, 
+		sender_email, 
+		approval_flag
+		FROM notice
+		WHERE email = #{value}	
+	</select>
+	
+	<!-- 알림 조회 -->
+	<select id="getNotice" parameterType="int" resultMap="NoticeSelectMap">
+		SELECT
+		*
+		FROM notice
+		WHERE notice_no in #{noticeNo}
+	</select>
+	
+	
+	<!-- 알림 삭제 -->
+	<delete id="deleteNotice" parameterType="int">
+		DELETE
+		FROM notice
+		WHERE notice_no = #{value}
+	</delete>
+	
+	<!-- 알림 전체 삭제 -->
+	<delete id="deleteAllNotice" parameterType="string">
+		DELETE
+		FROM notice
+		WHERE email = #{value}
+	</delete>
+	
+	<!-- 알림 카운트 수 -->
+	<select id="getNoticeCount" parameterType="string" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM notice
+		WHERE email = #{value} 
+		AND notice_condition = '2'
+	</select>	
+	
+	<update id="updateNotice" parameterType="string">
+		UPDATE notice
+		SET notice_condition = '1'
+		WHERE email in (#{email}) AND notice_condition in ('2')
+	</update>
+	
+	
+	<select id="getTotalCount"		parameterType="hashmap"		resultType="int">
+		SELECT COUNT(*)
+						FROM		( SELECT message_no,
+											 message_contents,
+											 receiver_email,
+											 send_date
+											 FROM message
+											 WHERE receiver_email = #{message.receiver.email}
+											 AND   message_category = 1	
+											 ) countTable
+	</select>
+	<select id="getTotalCount2"		parameterType="hashmap"		resultType="int">
+		SELECT COUNT(*)
+						FROM		( SELECT message_no,
+											 message_contents,
+											 send_date
+											 FROM message
+											 WHERE sender_email = #{message.sender.email}
+											 AND   message_category = 2
+											 ) countTable
+	</select>
+
+	<update id="setTargetTime" parameterType="user">
+		UPDATE users
+		SET user_target_time = #{userTargetTime}
+		WHERE email = #{email}
+	</update>
+	
+</mapper>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ogong.service.study.CamStudyMapper">
+
+	<resultMap id="userSelectMap" type="user">
+		<result property="email" 				column="email" 				jdbcType="VARCHAR"/>
+		<result property="nickname" 			column="nickname" 			jdbcType="VARCHAR" />
+		<result property="userTargetTime" 		column="user_target_time" 	jdbcType="NUMERIC" />
+		<result property="userImage" 			column="user_image" 		jdbcType="VARCHAR" />
+	</resultMap> 
+	
+	<resultMap id="camStudyMemberSelectMap" type="CamStudyMember">
+		<result property="camstudyMemberNo" 	column="camstudy_member_no" jdbcType="NUMERIC"/>
+		<result property="email" 				column="email" 				jdbcType="VARCHAR"/>
+		<result property="nickname" 			column="nickname" 			jdbcType="VARCHAR"/>
+		<result property="studyNo" 				column="study_no" 			jdbcType="NUMERIC" />
+		<result property="learningTime" 		column="learning_time" 		jdbcType="VARCHAR" />
+		<result property="learningType" 		column="learning_type" 		jdbcType="VARCHAR" />
+		<result property="entranceTime" 		column="entrance_time" 		jdbcType="DATE" />
+		<result property="totalLearningTime" 	column="total_learning_time" jdbcType="VARCHAR" />
+	</resultMap> 
+	
+	<resultMap id="studySelectMap" type="study">
+		<result property="studyNo" 					column="study_no" 					jdbcType="NUMERIC"/>
+		<result property="studyName" 				column="study_name" 				jdbcType="VARCHAR" />
+		<result property="studyHashtag" 			column="study_hashtag" 				jdbcType="VARCHAR" />
+		<result property="studyThumbnail" 			column="study_thumbnail" 			jdbcType="VARCHAR" />
+		<result property="studyStartDate" 			column="study_start_date" 			jdbcType="DATE" />
+		<result property="studyEndDate" 			column="study_end_date" 			jdbcType="DATE" />
+		<result property="studyRegDate" 			column="study_reg_date" 			jdbcType="DATE" />
+		<result property="currentMember" 			column="current_member" 			jdbcType="NUMERIC"  />
+		<result property="maxMember" 				column="max_member" 				jdbcType="NUMERIC" />
+		<result property="selfStudyRule" 			column="selfstudy_rule" 			jdbcType="VARCHAR" />
+		<result property="selfStudyPassword" 		column="selfstudy_password" 		jdbcType="VARCHAR"  />
+		<result property="groupStudyInfo" 			column="groupstudy_info" 			jdbcType="VARCHAR" />
+		<result property="groupStudyPlan" 			column="groupstudy_plan" 			jdbcType="VARCHAR" />
+		<result property="groupStudyCondition" 		column="groupstudy_condition" 		jdbcType="VARCHAR" />
+		<result property="recruitmentStartDate" 	column="recruitment_start_date" 	jdbcType="DATE"  />
+		<result property="recruitmentEndDate" 		column="recruitment_end_date" 		jdbcType="DATE" />
+		<result property="studyEndFlag" 			column="study_end_flag" 			jdbcType="CHAR" />
+		<result property="studyRoomGrade" 			column="studyroom_grade" 			jdbcType="VARCHAR" />
+		<result property="studyType" 				column="study_type" 				jdbcType="VARCHAR"  />
+		<result property="studyInterest" 			column="study_interest" 			jdbcType="VARCHAR" />
+		
+		<association property="studyMaker"  javaType="user">
+			<id property="email" column="email" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	
+	<select id="getUser" parameterType="string"	resultMap="userSelectMap">
+	  		select *
+			from users
+			where EMAIL=#{email}
+	</select> 
+	
+	<select	id="getStudy"	parameterType="int"	resultMap="studySelectMap">
+	 
+	 	SELECT 
+			study_no, 
+			email, 
+			study_name, 
+			study_hashtag, 
+			study_thumbnail, 
+			TO_CHAR(study_start_date,'YYYY/MM/DD') study_start_date, 
+			TO_CHAR(study_end_date,'YYYY/MM/DD') study_end_date, 
+			current_member, 
+			max_member, 
+			selfstudy_rule, 
+			selfstudy_password, 
+			studyroom_grade, 
+			study_type,
+			study_interest
+		FROM study
+		WHERE study_no = #{value}
+	 	
+	 </select>
+	
+	<insert 	id="addCamStudyMember" parameterType="CamStudyMember">
+	 	INSERT
+		INTO camstudy_member
+		( 
+		camstudy_member_no, email, study_no, nickname, learning_time,
+		learning_type, entrance_time, total_learning_time)
+		VALUES	 
+		(	
+		seq_camstudy_member_no.NEXTVAL, 
+		#{email},
+		#{studyNo},
+		#{nickname},
+		'00:00:00',
+		'공부',
+		SYSDATE,
+		'00:00:00'
+		)
+	 </insert>
+	 
+	 <select id="getCamStudyMember" parameterType="map" resultMap="camStudyMemberSelectMap">
+	 	SELECT
+		 	email, 
+			nickname, 
+			learning_time, 
+			learning_type, 
+			TO_CHAR(entrance_time,'YYYY/MM/DD HH:mm:ss') entrance_time,
+			total_learning_time
+	 	FROM camstudy_member
+	 	WHERE study_no = #{studyNo} AND email = #{email}
+	 </select>
+	 
+	 <select id="getCamStudyMemberList" parameterType="int" resultMap="camStudyMemberSelectMap">
+		SELECT
+			email, 
+			nickname, 
+			learning_time, 
+			learning_type, 
+			TO_CHAR(entrance_time,'YYYY/MM/DD HH:mm:ss') entrance_time,
+			total_learning_time
+		FROM camstudy_member
+		WHERE study_no = #{studyNo}
+	 </select>
+	 
+	 <update id="updateCamStudyMember" parameterType="CamStudyMember">
+	 	UPDATE camstudy_member
+	 	SET learning_time = ( SELECT TO_CHAR (TRUNC (total / 3600), 'fm00')
+	       							|| ':'
+	       							|| TO_CHAR (TRUNC (ABS (MOD (total, 3600)) / 60), 'fm00')
+	       							|| ':'
+	       							|| TO_CHAR (MOD (total, 60), 'fm00') time
+							  FROM (SELECT (
+ 	                   				(TO_NUMBER (SUBSTR (learning_time, 1, 2)) * 60 * 60
+ 	                 				+ TO_NUMBER (SUBSTR (learning_time, 4, 2)) * 60
+ 	                 				+ TO_NUMBER (SUBSTR (learning_time, 7, 2)))+
+ 	                 				(TO_NUMBER (SUBSTR (#{learningTime}, 1, 2)) * 60 * 60
+ 	                 				+ TO_NUMBER (SUBSTR (#{learningTime}, 4, 2)) * 60
+ 	                 				+ TO_NUMBER (SUBSTR (#{learningTime}, 7, 2))) ) total
+									FROM camstudy_member
+									WHERE email = #{email} AND study_no = #{studyNo}) )
+	 	WHERE email = #{email} AND study_no = #{studyNo}
+	 </update>
+	 
+	 <update id="updateCamStudyMemberZero" parameterType="CamStudyMember">
+	 	UPDATE camstudy_member
+	 	SET learning_type = #{learningType},
+	 		total_learning_time = ( SELECT TO_CHAR (TRUNC (total / 3600), 'fm00')
+	       							|| ':'
+	       							|| TO_CHAR (TRUNC (ABS (MOD (total, 3600)) / 60), 'fm00')
+	       							|| ':'
+	       							|| TO_CHAR (MOD (total, 60), 'fm00') time
+							  		FROM (SELECT (
+	 	                   				(TO_NUMBER (SUBSTR (total_learning_time, 1, 2)) * 60 * 60
+	 	                 				+ TO_NUMBER (SUBSTR (total_learning_time, 4, 2)) * 60
+	 	                 				+ TO_NUMBER (SUBSTR (total_learning_time, 7, 2)))+
+	 	                 				(TO_NUMBER (SUBSTR (learning_time, 1, 2)) * 60 * 60
+	 	                 				+ TO_NUMBER (SUBSTR (learning_time, 4, 2)) * 60
+	 	                 				+ TO_NUMBER (SUBSTR (learning_time, 7, 2))) ) total
+										FROM camstudy_member
+										WHERE email = #{email} AND study_no = #{studyNo}) ),
+			learning_time = '00:00:00'
+	 	WHERE email = #{email} AND study_no = #{studyNo}
+	 </update>
+	 
+	 <delete id="deleteCamStudyMember" parameterType="learningHistory">
+	 	DELETE camstudy_member
+	 	WHERE email = #{email} AND study_no = #{studyNo}
+	 </delete>
+	
+</mapper>

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ogong.service.user.UserMapper">
+ 	
+ 	
+	 <resultMap id="userSelectMap" type="user">
+		<result property="email" 				column="email" 				jdbcType="VARCHAR"/>
+		<result property="role"					column="role" 				jdbcType="VARCHAR" />
+		<result property="condition" 			column="condition" 			jdbcType="VARCHAR" />
+		<result property="nickname" 			column="nickname" 			jdbcType="VARCHAR" />
+		<result property="password" 			column="password" 			jdbcType="VARCHAR" />
+		<result property="name" 				column="name" 				jdbcType="VARCHAR" />
+		<result property="birth" 				column="birth" 				jdbcType="DATE" />
+		<result property="gender" 				column="gender" 			jdbcType="VARCHAR"  />
+		<result property="userImage" 			column="user_image" 		jdbcType="VARCHAR" />
+		<result property="goal" 				column="goal" 				jdbcType="VARCHAR" />
+		<result property="withdrawDate" 		column="withdraw_date" 		jdbcType="DATE" />
+		<result property="withdrawReason" 		column="withdraw_reason" 	jdbcType="VARCHAR" />
+		<result property="restoreDate" 			column="restore_date" 		jdbcType="DATE" />
+		<result property="restoreReason" 		column="restore_reason" 	jdbcType="VARCHAR" />
+		<result property="diligenceRate" 		column="diligence_rate" 	jdbcType="NUMERIC" />
+		<result property="participationRate" 	column="participation_rate" jdbcType="NUMERIC" />
+		<result property="suspendStartDate" 	column="suspend_start_date" jdbcType="DATE" />
+		<result property="suspendEndDate" 		column="suspend_end_date" 	jdbcType="DATE" />
+		<result property="userTargetTime" 		column="user_target_time" 	jdbcType="NUMERIC" />
+		<result property="regDate" 				column="reg_date" 			jdbcType="DATE" />
+		<result property="bananaCount" 			column="banana_count" 		jdbcType="NUMERIC" />
+		<result property="studyInterest1" 		column="study_interest1" 	jdbcType="VARCHAR" />
+		<result property="studyInterest2" 		column="study_interest2" 	jdbcType="VARCHAR" />
+		<result property="studyInterest3" 		column="study_interest3" 	jdbcType="VARCHAR" />
+	
+	
+
+		
+	</resultMap> 
+	
+		<resultMap id="boardSelectMap" 	type="board">
+		<result property="boardNo" 				column="board_no" 				jdbcType="NUMERIC"/>
+		<result property="boardCategory" 		column="board_category" 		jdbcType="VARCHAR" />
+		<result property="boardTitle" 			column="board_title" 			jdbcType="VARCHAR" />
+		<result property="boardContents"		column="board_contents" 		jdbcType="VARCHAR" />
+		<result property="boardInterest" 		column="board_interest" 		jdbcType="NUMERIC" />  
+		<result property="boardRegDate" 		column="board_reg_date" 		jdbcType="DATE" /> 
+		<result property="viewCount" 			column="view_count" 			jdbcType="NUMERIC" />
+		<result property="commentCount" 		column="comment_count" 			jdbcType="NUMERIC" />
+		<result property="boardRegBanana" 		column="board_reg_banana" 		jdbcType="NUMERIC" />
+		<result property="fileFlag" 			column="file_flag" 				jdbcType="NUMERIC" /> 
+		<result property="answerCount" 			column="answer_count" 			jdbcType="NUMERIC" />
+
+
+
+ 		<association property="writer"  javaType="user">
+			<id property="email" column="email" jdbcType="VARCHAR"/>
+			<result property="nickname" column="nickname" jdbcType="VARCHAR"/>			
+
+		</association>
+
+	</resultMap>
+
+		<resultMap id="studySelectMap" type="study">
+		<result property="studyNo" 					column="study_no" 					jdbcType="NUMERIC"/>
+		<result property="studyMaker.email"			column="email" 						jdbcType="VARCHAR" />
+		<result property="studyName" 				column="study_name" 				jdbcType="VARCHAR" />
+		<result property="studyHashtag" 			column="study_hashtag" 				jdbcType="VARCHAR" />
+		<result property="studyThumbnail" 			column="study_thumbnail" 			jdbcType="VARCHAR" />
+		<result property="studyStartDate" 			column="study_start_date" 			jdbcType="VARCHAR" />
+		<result property="studyEndDate" 			column="study_end_date" 			jdbcType="VARCHAR" />
+		<result property="studyRegDate" 			column="study_reg_date" 			jdbcType="DATE" />
+		<result property="currentMember" 			column="current_member" 			jdbcType="NUMERIC"  />
+		<result property="maxMember" 				column="max_member" 				jdbcType="NUMERIC" />
+		<result property="selfStudyRule" 			column="selfstudy_rule" 			jdbcType="VARCHAR" />
+		<result property="selfStudyOpenFlag" 		column="selfstudy_open_flag" 		jdbcType="CHAR" />
+		<result property="selfStudyPassword" 		column="selfstudy_password" 		jdbcType="VARCHAR"  />
+		<result property="groupStudyInfo" 			column="groupstudy_info" 			jdbcType="VARCHAR" />
+		<result property="groupStudyPlan" 			column="groupstudy_plan" 			jdbcType="VARCHAR" />
+		<result property="groupStudyCondition" 		column="groupstudy_condition" 		jdbcType="VARCHAR" />
+		<result property="recruitmentStartDate" 	column="recruitment_start_date" 	jdbcType="VARCHAR"  />
+		<result property="recruitmentEndDate" 		column="recruitment_end_date" 		jdbcType="VARCHAR" />
+		<result property="studyEndFlag" 			column="study_end_flag" 			jdbcType="CHAR" />
+		<result property="studyRoomGrade" 			column="studyroom_grade" 			jdbcType="VARCHAR" />
+		<result property="studyType" 				column="study_type" 				jdbcType="VARCHAR"  />
+		<result property="studyInterest" 			column="study_interest" 			jdbcType="VARCHAR" />
+	</resultMap>
+
+
+ 	<select id="list" resultType="string" resultMap="boardSelectMap" >
+	SELECT
+	    board_no,
+	    study_no,
+	    email,
+	    nickname,
+	    board_category,
+	    board_title,
+	    board_contents,
+	    board_interest,
+	    board_reg_date,
+	    view_count,
+	    board_reg_banana,
+	    file_flag
+	FROM
+    	board b
+    where
+       	email = #{email:VARCHAR}
+	</select>
+	 
+
+<!-- 	 <select id="list" resultMap="boardSelectMap" >
+		SELECT
+	a.* , b.*
+	FROM
+   users  a
+    JOIN
+     board  b  
+    ON
+    a.email = b.email AND
+    	   	 a.email = #{email:VARCHAR}
+	</select>   --> 
+	
+	
+	
+
+<!-- 			<select id="getTotalCount"		parameterType="search"		resultType="int">
+						SELECT COUNT(*)
+						     FROM (	SELECT   board_email,board_boardTitle,board_viewCount
+											 FROM board 	
+											 <if test="searchCondition != null">
+											 <where>
+										<if test="searchCondition == 0 and searchKeyword !='' ">
+											 board_email = #{searchKeyword}
+											</if>
+										<if test="searchCondition == 1 and searchKeyword !='' ">
+										board_boardTitle = #{searchKeyword}
+										</if>)
+												 </where> 
+											 </if> )countTable
+	</select> -->
+	
+
+
+	<insert 	id="addUser"		parameterType="user" >
+      	INSERT INTO users (
+		    EMAIL,
+		    ROLE,
+		    CONDITION,
+		    NICKNAME,
+		    PASSWORD,
+		    NAME,
+		    BIRTH,
+		    GENDER,
+		    USER_IMAGE,
+		    GOAL,
+		    WITHDRAW_DATE,
+		    WITHDRAW_REASON,
+		    RESTORE_DATE,
+		    RESTORE_REASON,
+		    DILIGENCE_RATE,
+		    PARTICIPATION_RATE,
+		    SUSPEND_START_DATE,
+		    SUSPEND_END_DATE,
+		    USER_TARGET_TIME,
+		    reg_Date,
+		    BANANA_COUNT,
+		    STUDY_INTEREST1,
+		    STUDY_INTEREST2,
+		    STUDY_INTEREST3
+		) VALUES (
+		    #{email:VARCHAR},
+		    '1',
+		    '1',
+		    #{nickname:VARCHAR},
+		    #{password:VARCHAR},
+		    #{name:VARCHAR},
+		    #{birth:DATE},
+		    #{gender:VARCHAR},
+		    #{userImage:VARCHAR},
+		    #{goal:VARCHAR},
+		    #{withdrawDate:DATE},
+		    #{withdrawReason:VARCHAR},
+		    #{restoreDate:DATE},
+		    #{restoreReason:VARCHAR},
+		    #{diligenceRate:NUMERIC},
+		    #{participationRate:NUMERIC},
+		    #{suspendStartDate:DATE},
+		    #{suspendEndDate:DATE},
+		    #{userTargetTime:NUMERIC},
+		    SYSDATE,
+		    #{bananaCount:NUMERIC},
+		    #{studyInterest1:VARCHAR},
+		    #{studyInterest2:VARCHAR},
+		    #{studyInterest3:VARCHAR}
+		)
+	 </insert>
+	 
+	 	<!--SQL : 프로필 (수정)  -->    
+	 <update	id="updateProfile"	parameterType="user" >
+	   	UPDATE users
+	   	<set>
+  		USER_IMAGE =  #{userImage:VARCHAR},
+	   		NICKNAME = #{nickname:VARCHAR},
+	   		NAME =  #{name:VARCHAR}, 
+   			BIRTH =  #{birth:DATE},
+   		 	GENDER =  #{gender:VARCHAR},
+    		GOAL =  #{goal:VARCHAR},
+    		STUDY_INTEREST1 = #{studyInterest1:VARCHAR},
+    		STUDY_INTEREST2 = #{studyInterest2:VARCHAR},
+    		STUDY_INTEREST3 = #{studyInterest3:VARCHAR} 
+	   	</set>
+	   	WHERE EMAIL = #{email:VARCHAR}
+	 </update> 
+	 
+
+		  	 <!--로그인  -->  	  
+	 <select 	id="getUser"	parameterType="string"	resultMap="userSelectMap">
+			SELECT *
+			FROM users
+			WHERE EMAIL= #{email:VARCHAR}
+			AND PASSWORD = #{password:VARCHAR}
+  	 </select> 
+	  
+	 
+	 <update id="Changedpassword" parameterType="user">
+	    UPDATE users
+	    SET
+	      PASSWORD= #{password} 
+	    WHERE EMAIL= #{email:VARCHAR}
+     </update>
+   
+   
+   <!-- 회원탈퇴 -->
+   	 <update	id="withdrawreason"	parameterType="user" >
+	   UPDATE users
+	   SET
+	   	condition = 2,
+	    withdraw_date = sysdate,
+	    withdraw_reason = #{withdrawReason}
+	    
+	   WHERE EMAIL= #{email:VARCHAR}
+     </update>
+     <!-- 회원복구 -->
+     <update	id="restore"	parameterType="user" >
+	   UPDATE users
+	   SET
+	   	CONDITION = 1,
+	    RESTORE_DATE = sysdate ,
+	    RESTORE_REASON =#{restoreReason:VARCHAR}
+	   WHERE EMAIL= #{email:VARCHAR}
+   </update>
+   
+   	<select id="nicknameCheck" parameterType="String" resultType="int">
+		SELECT count(*)
+		FROM users
+		WHERE NICKNAME = #{nickname};
+	 </select>
+	 
+ 	 <select 	id="getProfile"	parameterType="string"	resultMap="userSelectMap">
+		SELECT *
+		FROM users
+		where EMAIL= #{email:VARCHAR}
+	 </select> 
+	 
+        
+     <select id = "idCheck" parameterType = "String" resultType = "int">
+		SELECT count(*)
+		FROM users
+		where NICKNAME= #{nickname:VARCHAR}
+	 </select>
+
+  	  	  
+	 
+
+</mapper>

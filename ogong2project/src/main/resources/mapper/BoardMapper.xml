@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ogong.service.board.BoardMapper">
+ 	
+	<resultMap id="boardSelectMap" 	type="board">
+		<result property="boardNo" 				column="board_no" 				jdbcType="NUMERIC"/>
+		<result property="boardCategory" 		column="board_category" 		jdbcType="VARCHAR" />
+		<result property="boardTitle" 			column="board_title" 			jdbcType="VARCHAR" />
+		<result property="boardContents"		column="board_contents" 		jdbcType="VARCHAR" />
+		<result property="boardInterest" 		column="board_interest" 		jdbcType="VARCHAR" />  
+		<result property="boardRegDate" 		column="board_reg_date" 		jdbcType="DATE" /> 
+		<result property="viewCount" 			column="view_count" 			jdbcType="NUMERIC" />
+		<result property="commentCount" 		column="comment_count" 			jdbcType="NUMERIC" />
+		<result property="boardRegBanana" 		column="board_reg_banana" 		jdbcType="NUMERIC" />
+		<result property="fileFlag" 			column="file_flag" 				jdbcType="NUMERIC" /> 
+		<result property="answerCount" 			column="answer_count" 			jdbcType="NUMERIC" />
+		<result property="studyStartDate" 		column="study_start_date" 		jdbcType="VARCHAR" />
+		<result property="studyEndDate" 		column="study_end_date" 		jdbcType="VARCHAR" />
+		<result property="adoptionFlag" 		column="adoption_flag" 			jdbcType="VARCHAR" />
+		<result property="recommendCount" 		column="recommend_count" 		jdbcType="VARCHAR" />
+
+
+ 		<association property="writer"  javaType="user">
+			<id property="email" column="email" jdbcType="VARCHAR"/>
+			<result property="nickname" column="nickname" jdbcType="VARCHAR"/>			
+
+		</association>
+
+	</resultMap>
+	
+		
+	<resultMap id="commentSelectMap" 	type="comment">
+		<result property="commentNo" 				column="comment_no" 			jdbcType="NUMERIC" />
+		<result property="boardNo" 					column="board_no" 				jdbcType="NUMERIC"/>
+		<result property="commentWriter.email" 		column="email" 					jdbcType="VARCHAR" />
+		<result property="nickname" 				column="nickname" 				jdbcType="VARCHAR"/>
+		<result property="commentContents" 			column="comment_contents" 		jdbcType="VARCHAR"/>
+		<result property="commentRegDate" 			column="comment_Reg_Date" 		jdbcType="DATE" />
+	</resultMap>
+	
+	
+	<resultMap id="answerSelectMap" 	type="answer">
+		<result property="answerNo" 			 column="answer_no" 				jdbcType="NUMERIC" />
+		<result property="boardNo" 				 column="board_no" 					jdbcType="NUMERIC"/>
+		<result property="email" 	 			 column="email" 					jdbcType="VARCHAR" />
+		<result property="answerContents"		 column="answer_contents" 			jdbcType="VARCHAR" />
+		<result property="nickname" 			 column="nickname" 			 		jdbcType="VARCHAR"/>
+		<result property="userImage" 			 column="user_image" 			 	jdbcType="VARCHAR"/>
+		<result property="adoptionFlag" 		 column="adoption_flag" 			jdbcType="VARCHAR" />  
+		<result property="answerRegDate" 		 column="answer_reg_date" 			jdbcType="DATE" /> 
+		<result property="adoptionDate" 		 column="adoption_date" 			jdbcType="DATE" />
+		<result property="adoptionNo" 			 column="adoption_no" 				jdbcType="NUMERIC" />
+	</resultMap>
+	
+	
+	<resultMap id="recommendSelectMap" 			type="recommend">
+		<result property="recommendNo" 			column="recommend_no" 				jdbcType="NUMERIC" />
+	</resultMap>
+	
+
+	<resultMap id="fileSelectMap" 				type="file">
+		<result property="fileNo" 				column="file_info_no" 				jdbcType="NUMERIC" />
+		<result property="fileName" 			column="file_name" 					jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+<!-- 게시판 등록 1.정보공유 게시판 2.Q&A게시판 3.합격후기 게시판 
+4.자유게시판5.자율스터디 모집게시판 6.파일공유 게시판-->
+
+	<insert id="addBoard" parameterType="board">
+		<selectKey order="BEFORE" keyProperty="boardNo" resultType="int">
+			SELECT seq_board_no.nextval FROM DUAL
+		</selectKey>
+		INSERT
+		INTO board( board_no,
+					<if test="study!=null and study.studyNo!=null">
+						study_no,
+					</if>
+					email, 
+					nickname, 
+					board_category, 
+					board_title,
+					board_contents, 
+					board_interest, 
+					board_reg_date, 
+					<if test="boardRegBanana!=null">
+						board_reg_banana,
+					</if>
+					file_flag, 
+					study_start_date,
+					study_end_date,
+					view_count
+					<if test="boardCategory=='2'">
+						,adoption_flag
+					</if>	
+					)
+			VALUES( #{boardNo},
+					<if test="study!=null and study.studyNo!=null">
+						#{study.studyNo},
+					</if>
+					#{writer.email},
+					#{writer.nickname:VARCHAR},
+					#{boardCategory},
+					#{boardTitle},
+					#{boardContents},
+					#{boardInterest:VARCHAR},
+					SYSDATE,
+					<if test="boardRegBanana!=null">
+						#{boardRegBanana},
+					</if>
+					#{fileFlag},
+					#{studyStartDate:VARCHAR},
+					#{studyEndDate:VARCHAR},		
+					0
+					<if test="boardCategory=='2'">
+						,'2'
+					</if>	 
+					)
+	</insert>	
+
+
+	
+<!-- 게시판 보기 1.정보공유 게시판 2.Q&A게시판 3.합격후기 게시판
+ 4.자유게시판5.자율스터디 모집게시판 6.파일공유 게시판-->
+	
+		<select id="getBoard" parameterType="board" resultMap="boardSelectMap">
+			SELECT
+				board_no,
+				nickname,
+				email,
+				board_category,
+				board_title,
+				board_contents,
+				board_interest,
+				TO_CHAR(board_reg_date,'YYYY/MM/DD HH:MM') board_reg_date,
+				view_count,
+				study_start_date,
+				study_end_date,
+				(SELECT COUNT(*)
+                     FROM comment_info c
+                     WHERE c.board_no = #{boardNo}) comment_count,
+                (SELECT COUNT(*)
+                     FROM answer a
+                     WHERE a.board_no = #{boardNo}) answer_count,
+                board_reg_banana,
+				file_flag,
+				adoption_flag,
+				(
+                   	SELECT COUNT(*)
+             		FROM
+             		 	recommend r
+             		WHERE r.board_no = #{boardNo}
+             	) recommend_count
+			
+			FROM 
+				board
+			WHERE 
+				board_no = #{boardNo}
+		</select> 
+	
+		
+<!-- 게시판 수정 -->
+	
+		<update id="updateBoard" parameterType="board" >
+			UPDATE 
+				board 
+			SET 
+				board_title = #{boardTitle}			
+				, board_contents = #{boardContents}
+			WHERE 
+				board_no = #{boardNo}
+		</update>
+	
+
+		
+<!-- 게시판 삭제 -->
+	
+	
+		<delete id="deleteBoard" parameterType="board" >
+			DELETE
+			FROM 
+				board
+			WHERE
+				 board_no = #{boardNo}
+		</delete> 
+		 
+		
+	
+	
+<!-- 게시판 목록 
+1.정보공유 게시판 2.Q&A게시판 3.합격후기 게시판 4.자유게시판 5.자율스터디 모집게시판 6.파일공유 게시판
+
+검색조건- 제목,내용,작성자
+
+정렬순- 기본정렬:최신순, 1.조회수, 2.추천수-->
+	
+	<select 	id="listBoard" parameterType="hashmap" resultMap="boardSelectMap">
+
+		SELECT
+	  		a.*
+	  	FROM
+	  		(
+                SELECT 
+                    ROWNUM AS rnum,
+                     a.board_no,
+                     a.study_no,                  
+                     a.email,
+                     a.nickname,
+                     a.board_category,
+                     a.board_title,
+                     a.board_contents,
+                     a.board_interest,
+                     TO_CHAR(a.board_reg_date,'YYYY/MM/DD') board_reg_date,
+                     a.view_count,
+                     (
+                     	SELECT COUNT(*)
+                		FROM 
+                	 		comment_info c
+               			WHERE 
+               				c.board_no = #{board.boardNo}
+               		 ) commentCount,
+                     a.board_reg_banana,
+                     a.file_flag,
+					 (
+					 	SELECT COUNT(*)
+                     	FROM ANSWER a
+                     	WHERE a.board_no = #{board.boardNo}
+                     ) 	answerCount,
+                     (
+                     	SELECT COUNT(*)
+               			FROM
+               		 		recommend r
+               			WHERE r.board_no = #{board.boardNo}
+               		) recommendCount
+                FROM 
+                    board a
+                WHERE
+                	board_category = #{board.boardCategory}
+                	<if test="search.searchKeyword!=null and search.searchKeyword!=''">
+                		<choose>
+                			<!-- <when test="searchCondition!=null and searchCondition==1"> -->
+                			<when test='search.searchCondition == 1'>
+                				AND (board_title like '%'||#{search.searchKeyword}||'%'
+                				OR board_contents like '%'||#{search.searchKeyword}||'%')
+                			</when>
+                			<when test="search.searchCondition == 2">
+                				AND board_title like '%'||#{search.searchKeyword}||'%'
+                			</when>
+                			<otherwise>
+                				AND nickname like '%'||#{search.searchKeyword}||'%'
+                			</otherwise>
+                		</choose>
+					 </if>
+		      		<choose>
+		      			<when test="searchSort == 1">
+		      				ORDER BY viewCount DESC
+		      			</when>
+		      			<when test="searchSort == 2">
+		      				ORDER BY recommendCount DESC
+		      			</when>
+		      			<otherwise>
+		      				 ORDER BY board_no DESC
+		      			</otherwise>
+		      		</choose>
+            
+	  		) a	
+	  	WHERE
+  			a.rnum BETWEEN #{search.startRowNum} AND #{search.endRowNum}
+         	   	
+	</select> 
+
+
+	<!-- 댓글 등록 -->
+	
+	<insert id="addComment" parameterType="comment" >
+		INSERT 
+		INTO comment_info 
+		VALUES (
+				seq_comment_no.nextval,
+				 	#{boardNo}, 
+				 	#{commentWriter.email},
+				 	#{commentContents},
+				 	SYSDATE
+				)
+	</insert>
+	
+	
+	<!--  댓글 수정 -->
+	
+	<update id="updateComment" parameterType="comment" >
+			UPDATE 
+				comment_info 
+			SET
+				comment_contents = #{commentContents}			
+			WHERE 
+				comment_no = #{commentNo}
+			AND	board_no = #{boardNo}
+			AND email = #{commentWriter.email}	
+	</update>
+	
+	
+	<!-- 댓글 삭제 -->
+	
+	<delete id="deleteComment" parameterType="comment" >
+			DELETE
+			FROM 
+				comment_info
+			WHERE 
+				comment_no = #{commentNo}
+			AND	board_no = #{boardNo}
+			AND email = #{commentWriter.email}
+	</delete>
+	
+	
+	
+	<!-- 댓글 목록 -->
+<!-- 		<select 	id="listComment" parameterType="map" resultMap="boardSelectMap">
+
+		SELECT
+	  		a.*
+	  	FROM
+	  		(
+                SELECT 
+                    ROWNUM AS rnum,
+                   	 a.comment_no;
+                     a.board_no,             
+                     a.email,
+					 a.comment_contents,
+					 a.nickname,
+					 a.commeng_reg_date
+                FROM 
+                    board a
+                WHERE
+                	board_category = #{board.boardCategory}
+
+                ORDER BY board_no DESC
+	  		) a	
+	</select> 
+	 -->
+	 
+	<!-- 목록 수  -->
+	 
+	 <select	id="getTotalCount"	parameterType="search"		resultType="int">
+		SELECT
+	  		COUNT(*)
+	  	FROM
+	  		(
+                SELECT 
+                    ROWNUM AS rnum,
+                     a.board_no,
+                     a.study_no,                  
+                     a.email,
+                     a.nickname,
+                     a.board_category,
+                     a.board_title,
+                     a.board_contents,
+                     a.board_interest,
+                     a.board_reg_date,
+                     a.view_count,
+                     (
+                     	SELECT COUNT(*)
+                		FROM 
+                	 		comment_info c
+               			WHERE 
+               				c.board_no = #{board.boardNo}
+               		 ) commentCount,
+                     a.board_reg_banana,
+                     a.file_flag,
+					 (
+					 	SELECT COUNT(*)
+                     	FROM ANSWER a
+                     	WHERE a.board_no = #{board.boardNo}
+                     ) 	answerCount,
+                     (
+                     	SELECT COUNT(*)
+               			FROM
+               		 		recommend r
+               			WHERE r.board_no = #{board.boardNo}
+               		) recommendCount
+                FROM 
+                    board a
+                WHERE
+                	board_category = #{board.boardCategory}
+                	<if test="search.searchKeyword!=null and search.searchKeyword!=''">
+                		<choose>
+                			<!-- <when test="searchCondition!=null and searchCondition==1"> -->
+                			<when test='search.searchCondition!=null and search.searchCondition.equals("1")'>
+                				AND board_title like '%'||#{search.searchKeyword}||'%'
+                			</when>
+                			<when test="searchCondition!=null and searchCondition==2">
+                				AND board_contents like '%'||#{search.searchKeyword}||'%'
+                			</when>
+                			<otherwise>
+                				AND nickname like '%'||#{search.searchKeyword}||'%'
+                			</otherwise>
+                		</choose>
+					 </if>
+      			) countTable
+	 
+	 </select>	
+	
+	
+	<!--  댓글 목록 -->
+	
+	<select id="listComment" parameterType="map" resultMap="commentSelectMap">
+		SELECT		
+			 c.*,
+			 u.nickname
+		FROM
+			(
+				SELECT
+					 rownum AS rnum,
+					 c.comment_no,
+					 c.board_no,
+					 c.email,
+					 c.comment_contents,	
+					 TO_CHAR(c.comment_reg_date,'YYYY/MM/DD HH:MM') comment_reg_date
+				FROM
+					comment_info c
+				WHERE	
+					c.board_no = #{boardNo}
+				ORDER BY 
+					comment_no DESC
+			) c		 
+		LEFT JOIN 
+			users u 
+		ON  c.email = u.email 
+		WHERE 
+			c.rnum BETWEEN #{startRowNum} AND #{endRowNum}
+		ORDER BY c.comment_no
+						
+	</select>
+
+
+	<!-- 답변 수 -->
+ 
+	<select id="listCommentCount" parameterType="map" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			comment_info
+		WHERE	
+			board_no = #{boardNo}
+	</select> 
+	
+	
+	
+	<!-- 답변 목록 -->
+	
+	<select id="listAnswer" parameterType="int" resultMap="answerSelectMap">
+		SELECT		
+			 a.answer_no
+			,a.board_no
+			,a.email
+			,a.answer_contents
+			,a.adoption_flag
+			,TO_CHAR(a.answer_reg_date,'YYYY/MM/DD HH:MM') answer_reg_date
+			,a.nickname
+			,a.adoption_date
+			,u.user_image
+		FROM
+			answer a, users u
+		WHERE 
+			board_no = #{boardNo}
+			AND a.email = u.email
+		ORDER BY a.answer_no DESC
+	</select>
+
+	<!-- Q&A 게시판 답변 등록 -->
+	
+	<insert  id="addAnswer"	parameterType="answer">
+	
+		INSERT
+		INTO answer  		
+		VALUES (
+			seq_answer_no.nextval,
+			#{boardNo},
+			#{email},
+			#{answerContents},
+			2,
+			SYSDATE,
+			(SELECT nickname
+			FROM users
+			WHERE email = #{email}),
+			#{adoptionDate:DATE}
+		)
+
+	</insert>
+
+
+ 
+ 	<!-- Q&A 게시판 답변 수정 -->
+
+	<update  id="updateAnswer"	parameterType="answer">
+	
+		UPDATE 
+			answer
+		SET		
+			answer_contents = #{answerContents}
+		WHERE 
+			answer_no = #{answerNo}	
+		AND	board_no = #{boardNo}
+		AND email = #{email}				
+	</update> 
+	
+	
+	
+	
+	<!-- Q&A 답변 조회 -->
+	
+	<select  id="getAnswer"	parameterType="answer"  resultMap="answerSelectMap">
+		SELECT 
+			 answer_no
+			,board_no
+			,email
+			,answer_contents
+			,adoption_flag
+			,answer_reg_date
+			,nickname
+			,adoption_date
+		FROM		
+			answer
+		WHERE 
+			answer_no = #{answerNo}	
+	</select> 
+
+	<!-- Q&A 게시판 답변 삭제 -->	
+	
+	<delete id="deleteAnswer" parameterType="answer" >
+		DELETE
+		FROM 
+			answer
+		WHERE
+			answer_no = #{answerNo}
+		AND board_no = #{boardNo}
+		AND email = #{email}		
+	</delete>
+	
+	
+<!-- 게시판 조회수 -->	
+
+	
+	<update id="updateViewcnt" parameterType="int">
+		UPDATE
+			 board 
+		SET 
+			view_count = view_count + 1 
+		where 
+			board_no = #{value}
+	</update>
+	
+	
+	<!-- 게시판 추천수 -->	
+	
+	
+	<insert id="addRecommend" parameterType="board">
+		INSERT
+		INTO recommend	
+		VALUES (
+			seq_recommend_no.nextval,
+			#{boardNo},
+			#{writer.email}
+			)					
+	</insert>
+	
+	
+	<select id="recommendCount" parameterType="board" resultType="int">
+		SELECT		
+			count(*)		
+		FROM 
+			recommend
+		WHERE 
+			board_no = #{boardNo}  		 
+	</select> 
+	
+		
+	<delete id="deleteRecommend" parameterType="int" >
+		DELETE
+		FROM 
+			recommend
+		WHERE
+			recommend_no = #{value}
+	</delete>
+	
+	
+	<select id="getRecommendNo" parameterType="board" resultMap="recommendSelectMap">
+		SELECT		
+			recommend_no		
+		FROM 
+			recommend
+		WHERE 
+			email = #{writer.email}
+		AND	board_no = #{boardNo}  		 
+	</select> 
+	
+
+	
+	
+	<!-- 답변 채택 -->
+	<select id="adoptionCount" parameterType="answer" resultType="int">
+		SELECT		
+			count(*)		
+		FROM 
+			answer
+		WHERE 
+			answer_no = #{answerNo}  		 
+	</select> 
+	
+		
+	<delete id="deleteAdoption" parameterType="int" >
+		DELETE
+		FROM 
+			answer
+		WHERE
+			adoption_no = #{value}
+	</delete>
+	
+	
+	<select id="getAdoptionNo" parameterType="answer" resultMap="answerSelectMap">
+		SELECT		
+			adoption_no		
+		FROM 
+			answer
+		WHERE 
+			nickname = #{nickname}
+		AND	board_no = #{boardNo}  		 
+	</select> 
+	
+	<update id="updateAdoption" parameterType="int" >
+			UPDATE 
+				answer 
+			SET
+				adoption_Flag = 1	
+				,adoption_Date = Sysdate		
+			WHERE 
+				answer_no = #{answerNo}
+				
+	</update>
+	
+	<update id="updateBoardAdoption" parameterType="int" >
+			UPDATE 
+				board 
+			SET
+				adoption_Flag = 1			
+			WHERE 
+				board_no = #{boardNo}
+				
+	</update>
+		
+	<!-- 파일업로드 -->
+	
+	<insert id="addFile" parameterType="file">
+		INSERT
+		INTO file_info
+		VALUES (
+			seq_file_info_no.nextval
+			,#{fileName}
+			,#{fileBoard.boardNo}	
+			)					
+	</insert>
+	
+	
+	<select id="getFileList" parameterType="board" resultMap="fileSelectMap">
+		SELECT		
+			file_info_no,
+			file_name					
+		FROM 
+			file_info
+		WHERE 
+			board_no = #{boardNo}	  		 
+	</select> 
+	
+	
+	<select id="getFile" parameterType="file" resultMap="fileSelectMap">
+		SELECT		
+			file_info_no,
+			file_name					
+		FROM 
+			file_info
+		WHERE 
+			file_info_no = #{fileNo}	  		 
+	</select> 
+	
+	<!-- 알림을 위한 게시글 상세보기 -->
+	<select id="getNoticeBoard" parameterType="int" resultMap="boardSelectMap">
+		SELECT
+			board_no,
+			nickname,
+			email,
+			board_category,
+			board_title,
+			board_contents,
+			board_interest,
+			board_reg_date,
+			view_count,
+			study_start_date,
+			study_end_date
+		FROM 
+			board
+		WHERE 
+			board_no = #{boardNo}
+	</select> 	
+	
+	
+</mapper>

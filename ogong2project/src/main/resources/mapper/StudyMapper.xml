@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ogong.service.study.StudyMapper">
+ 	
+	<resultMap id="studySelectMap" type="study">
+		<result property="studyNo" 					column="study_no" 					jdbcType="NUMERIC"/>
+		<result property="studyName" 				column="study_name" 				jdbcType="VARCHAR" />
+		<result property="studyHashtag" 			column="study_hashtag" 				jdbcType="VARCHAR" />
+		<result property="studyThumbnail" 			column="study_thumbnail" 			jdbcType="VARCHAR" />
+		<result property="studyStartDate" 			column="study_start_date" 			jdbcType="DATE" />
+		<result property="studyEndDate" 			column="study_end_date" 			jdbcType="DATE" />
+		<result property="studyRegDate" 			column="study_reg_date" 			jdbcType="DATE" />
+		<result property="currentMember" 			column="current_member" 			jdbcType="NUMERIC"  />
+		<result property="maxMember" 				column="max_member" 				jdbcType="NUMERIC" />
+		<result property="selfStudyRule" 			column="selfstudy_rule" 			jdbcType="VARCHAR" />
+		<result property="selfStudyPassword" 		column="selfstudy_password" 		jdbcType="VARCHAR"  />
+		<result property="groupStudyInfo" 			column="groupstudy_info" 			jdbcType="VARCHAR" />
+		<result property="groupStudyPlan" 			column="groupstudy_plan" 			jdbcType="VARCHAR" />
+		<result property="groupStudyCondition" 		column="groupstudy_condition" 		jdbcType="VARCHAR" />
+		<result property="recruitmentStartDate" 	column="recruitment_start_date" 	jdbcType="DATE"  />
+		<result property="recruitmentEndDate" 		column="recruitment_end_date" 		jdbcType="DATE" />
+		<result property="studyEndFlag" 			column="study_end_flag" 			jdbcType="CHAR" />
+		<result property="studyRoomGrade" 			column="studyroom_grade" 			jdbcType="VARCHAR" />
+		<result property="studyType" 				column="study_type" 				jdbcType="VARCHAR"  />
+		<result property="studyInterest" 			column="study_interest" 			jdbcType="VARCHAR" />
+		<result property="groupStudyNotice" 		column="groupstudy_notice" 			jdbcType="VARCHAR" />
+		
+		<association property="studyMaker"  javaType="user">
+			<id property="email" column="email" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<resultMap id="userSelectMap" type="user">
+		<result property="email" 				column="email" 				jdbcType="VARCHAR"/>
+		<result property="nickname" 			column="nickname" 			jdbcType="VARCHAR" />
+	</resultMap> 
+	
+	<resultMap id="camStudyMemberSelectMap" type="CamStudyMember">
+		<result property="camstudyMemberNo" 	column="camstudy_member_no" jdbcType="NUMERIC"/>
+		<result property="studyNo" 				column="study_no" 			jdbcType="NUMERIC" />
+		<result property="learningTime" 		column="learning_time" 		jdbcType="VARCHAR" />
+		<result property="learningType" 		column="learning_type" 		jdbcType="VARCHAR" />
+		<result property="entranceTime" 		column="entrance_time" 		jdbcType="DATE" />
+		<result property="totalLearningTime" 	column="total_learning_time" jdbcType="VARCHAR" />
+		<association property="user"  javaType="user">
+			<id property="email" 		column="email" jdbcType="VARCHAR"/>
+			<result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap> 
+	
+	<insert 	id="addStudy"		parameterType="study" 
+	useGeneratedKeys="true" keyColumn="study_no" keyProperty="studyNo">
+	 	INSERT
+		INTO study
+		( 
+		study_no, 
+		email, 
+		study_name, 
+		study_hashtag, 
+		study_thumbnail, 
+		study_start_date, 
+		study_end_date, 
+		study_reg_date, 
+		current_member, 
+		max_member, 
+		selfstudy_rule, 
+		selfstudy_password, 
+		groupstudy_info, 
+		groupstudy_plan, 
+		groupstudy_condition, 
+		recruitment_start_date, 
+		recruitment_end_date, 
+		study_end_flag, 
+		studyroom_grade, 
+		study_type, 
+		study_interest)
+		VALUES	 
+		(	
+		seq_study_no.NEXTVAL, 
+		#{studyMaker.email}, 
+		#{studyName}, 
+		#{studyHashtag:VARCHAR}, 
+		#{studyThumbnail:VARCHAR}, 
+		<if test="studyStartDate == null">
+			SYSDATE,
+		</if>
+		<if test="studyStartDate != null">
+			#{studyStartDate},
+		</if>
+		#{studyEndDate}, 
+		SYSDATE, 
+		#{currentMember}, 
+		#{maxMember:NUMERIC}, 
+		#{selfStudyRule:VARCHAR},
+		#{selfStudyPassword:VARCHAR},
+		#{groupStudyInfo:VARCHAR},
+		#{groupStudyPlan:VARCHAR}, 
+		#{groupStudyCondition:VARCHAR}, 
+		#{recruitmentStartDate:DATE}, 
+		#{recruitmentEndDate:DATE},
+		'1', 
+		#{studyRoomGrade},
+		#{studyType}, 
+		#{studyInterest} 
+		)
+	 </insert>
+	 
+	 <insert 	id="addParticipation"		parameterType="groupStudyMember" >
+	 	INSERT
+		INTO groupstudy_member
+		( 
+			groupstudy_member_no,
+			study_no, 
+			email, 
+			studyrole,
+			participation_reason, 
+			determination,
+			approval_flag
+		)
+		VALUES	 
+		(	
+			seq_groupstudy_member_no.NEXTVAL, 
+			#{study.studyNo}, 
+			#{member.email}, 
+			#{studyRole:VARCHAR}, 
+			#{participationReason:VARCHAR}, 
+			#{determination:VARCHAR},
+			#{approvalFlag:VARCHAR}
+		)
+	 </insert>
+	 
+	 <select	id="getStudy"	parameterType="int"	resultMap="studySelectMap">
+	 
+	 	SELECT 
+			study_no, 
+			email, 
+			study_name, 
+			study_hashtag, 
+			study_thumbnail, 
+			TO_CHAR(study_start_date,'YYYY/MM/DD') study_start_date, 
+			TO_CHAR(study_end_date,'YYYY/MM/DD') study_end_date, 
+			current_member, 
+			max_member, 
+			selfstudy_rule, 
+			selfstudy_password, 
+			groupstudy_info, 
+			groupstudy_plan, 
+			groupstudy_condition, 
+			TO_CHAR(recruitment_start_date,'YYYY/MM/DD') recruitment_start_date,
+			TO_CHAR(recruitment_end_date,'YYYY/MM/DD') recruitment_end_date, 
+			studyroom_grade, 
+			study_type,
+			study_interest,
+			groupstudy_notice
+		FROM study
+		WHERE study_no = #{value}
+	 	
+	 </select>
+	 
+	 <select id="getStudyList"	parameterType="search" resultMap="studySelectMap">
+	 
+	 	SELECT outer_table.*
+		FROM (  SELECT
+   					inner_table.*, ROWNUM AS row_seq
+  			FROM (  SELECT
+      					study_no, 
+      					email, 
+      					study_name, 
+      					study_hashtag, 
+      					study_thumbnail, 
+      					TO_CHAR(study_start_date,'YYYY/MM/DD') study_start_date, 
+						TO_CHAR(study_end_date,'YYYY/MM/DD') study_end_date, 
+      					current_member, 
+						max_member, 
+						selfstudy_password, 
+						TO_CHAR(recruitment_start_date,'YYYY/MM/DD') recruitment_start_date, 
+						TO_CHAR(recruitment_end_date,'YYYY/MM/DD') recruitment_end_date, 
+						studyroom_grade,
+						study_type,
+						study_interest
+      			FROM study
+      			<where>
+      					<if test="studyEndFlag == 1">
+      						AND study_end_date >= TO_CHAR(SYSDATE,'yyyy-mm-dd')
+      					</if>
+      					<if test="studyEndFlag == 2">
+      						AND study_end_date &lt; TO_CHAR(SYSDATE,'yyyy-mm-dd')
+      					</if>
+      					<if test="studyType == 'self'">
+      						AND study_type = 'self'
+      					</if>
+      					<if test="studyType == 'group'">
+      						AND study_type = 'group'
+      					</if>
+      					<if test="studyInterest != null">
+      						<if test="studyInterest == 1">
+      						AND study_interest = '독서'
+      						</if>
+      						<if test="studyInterest == 2">
+      						AND study_interest = '어학'
+      						</if>
+      						<if test="studyInterest == 3">
+      						AND study_interest = '임용'
+      						</if>
+      						<if test="studyInterest == 4">
+      						AND study_interest = '취업'
+      						</if>
+      						<if test="studyInterest == 5">
+      						AND study_interest = '공무원'
+      						</if>
+      						<if test="studyInterest == 6">
+      						AND study_interest = '자격증'
+      						</if>
+      						<if test="studyInterest == 7">
+      						AND study_interest = '자기계발'
+      						</if>
+      						<if test="studyInterest == 8">
+      						AND study_interest = '기타공부'
+      						</if>		
+      					</if>
+	      				<if test="searchKeyword != null">
+			      			AND (study_name LIKE '%'||#{searchKeyword}||'%'
+			      			OR study_hashtag LIKE '%'||#{searchKeyword}||'%')
+			      		</if>
+	      		</where>
+	      		ORDER BY studyroom_grade DESC
+	      		<choose>
+	      			<when test="searchSort == 1">
+	      				, study_no ASC
+	      			</when>
+	      			<when test="searchSort == 2">
+	      				, current_member DESC
+	      			</when>
+	      			<when test="searchSort == 3">
+	      				, current_member ASC
+	      			</when>
+	      			<otherwise>
+	      				, study_no DESC
+	      			</otherwise>
+	      		</choose>
+   				) inner_table
+   			WHERE ROWNUM &lt;= #{endRowNum}) outer_table
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+
+	 </select>
+	 
+	 <select	id="getTotalCount"	parameterType="search"		resultType="int">
+	 	 SELECT COUNT(*)
+	 	 FROM(	SELECT
+      			study_no, email, study_name, study_hashtag, study_thumbnail, study_start_date, study_end_date, current_member, 
+				max_member, selfstudy_password, recruitment_start_date, recruitment_end_date, studyroom_grade, study_interest
+      			FROM study
+      			<where>
+      					<if test="studyEndFlag == 1">
+      						AND study_end_date >= TO_CHAR(SYSDATE,'yyyy-mm-dd')
+      					</if>
+      					<if test="studyEndFlag == 2">
+      						AND study_end_date &lt; TO_CHAR(SYSDATE,'yyyy-mm-dd')
+      					</if>
+      					<if test="studyType == 'self'">
+      						AND study_type = 'self'
+      					</if>
+      					<if test="studyType == 'group'">
+      						AND study_type = 'group'
+      					</if>
+      					<if test="studyInterest != null">
+      						<if test="studyInterest == 1">
+      						AND study_interest = '독서'
+      						</if>
+      						<if test="studyInterest == 2">
+      						AND study_interest = '어학'
+      						</if>
+      						<if test="studyInterest == 3">
+      						AND study_interest = '임용'
+      						</if>
+      						<if test="studyInterest == 4">
+      						AND study_interest = '취업'
+      						</if>
+      						<if test="studyInterest == 5">
+      						AND study_interest = '공무원'
+      						</if>
+      						<if test="studyInterest == 6">
+      						AND study_interest = '자격증'
+      						</if>
+      						<if test="studyInterest == 7">
+      						AND study_interest = '자기계발'
+      						</if>
+      						<if test="studyInterest == 8">
+      						AND study_interest = '기타공부'
+      						</if>		
+      					</if>
+	      				<if test="searchKeyword != null">
+			      			AND (study_name LIKE '%'||#{searchKeyword}||'%'
+			      			OR study_hashtag LIKE '%'||#{searchKeyword}||'%')
+			      		</if>
+	      		</where>
+      			) countTable
+	 
+	 </select>
+	 
+	 <update id="updateMember" parameterType="map">
+	 	UPDATE study
+	 	SET current_member = current_member + #{num}
+	 	WHERE study_no = #{studyNo}
+	 </update>
+	 
+	 <delete id="deleteStudy" parameterType="int">
+	 
+	 	DELETE
+	 	FROM
+	 		study
+	 	WHERE
+	 		study_no = #{value}
+	 
+	 </delete>
+	 
+	 <select id="getMySelfStudy" parameterType="string" resultMap="studySelectMap">
+	 
+	 	SELECT
+			study_no, 
+			email, 
+			study_name, 
+			study_hashtag, 
+			study_thumbnail, 
+			TO_CHAR(study_start_date,'YYYY/MM/DD') study_start_date, 
+			TO_CHAR(study_end_date,'YYYY/MM/DD') study_end_date, 
+   			current_member, 
+			max_member, 
+			TO_CHAR(recruitment_start_date,'YYYY/MM/DD') recruitment_start_date, 
+			TO_CHAR(recruitment_end_date,'YYYY/MM/DD') recruitment_end_date, 
+			studyroom_grade,
+			study_type,
+			study_interest
+   			FROM study
+   			<where>
+   				study_end_flag = '1' AND study_type = 'self'
+				AND email = #{email}
+     		</where>
+     		ORDER BY study_no ASC
+     		
+	 </select>
+	 
+	 <select id="getMyStudy" parameterType="map" resultMap="studySelectMap">
+	 
+	 	SELECT
+			study_no, 
+			email, 
+			study_name, 
+			study_hashtag, 
+			study_thumbnail, 
+			TO_CHAR(study_start_date,'YYYY/MM/DD') study_start_date, 
+			TO_CHAR(study_end_date,'YYYY/MM/DD') study_end_date, 
+   			current_member, 
+			max_member, 
+			selfstudy_password,
+			TO_CHAR(recruitment_start_date,'YYYY/MM/DD') recruitment_start_date, 
+			TO_CHAR(recruitment_end_date,'YYYY/MM/DD') recruitment_end_date, 
+			studyroom_grade,
+			study_type,
+			study_interest
+   			FROM study
+   			<where>
+   				<if test="endFlag == 1">
+					study_end_flag = '1'
+				</if>
+				<if test="endFlag == 2">
+					study_end_flag = '2'
+				</if>
+   				AND study_type = 'group'
+   				AND study_no IN (SELECT study_no
+   								 FROM groupstudy_member
+   								 WHERE email = #{email}
+   								 <if test="approvalFlag == 0">
+   								 	AND approval_flag IS NULL
+   								 </if>
+   								 <if test="approvalFlag == 1">
+   								 	AND approval_flag = '1'
+   								 </if>
+   								 )
+     		</where>
+     		ORDER BY study_no ASC
+     		
+	 </select>
+	 
+	 <update id="updateNotice"	parameterType="study">
+	 	UPDATE
+	 		study
+	 	SET
+	 		groupstudy_notice = #{groupStudyNotice}
+	 	WHERE
+	 		study_no = #{studyNo}
+	 </update>
+	
+</mapper>
