@@ -60,7 +60,6 @@
 		</association>
 
 	</resultMap>
-
 		<resultMap id="studySelectMap" type="study">
 		<result property="studyNo" 					column="study_no" 					jdbcType="NUMERIC"/>
 		<result property="studyMaker.email"			column="email" 						jdbcType="VARCHAR" />
@@ -107,39 +106,6 @@
        	email = #{email:VARCHAR}
 	</select>
 	 
-
-<!-- 	 <select id="list" resultMap="boardSelectMap" >
-		SELECT
-	a.* , b.*
-	FROM
-   users  a
-    JOIN
-     board  b  
-    ON
-    a.email = b.email AND
-    	   	 a.email = #{email:VARCHAR}
-	</select>   --> 
-	
-	
-	
-
-<!-- 			<select id="getTotalCount"		parameterType="search"		resultType="int">
-						SELECT COUNT(*)
-						     FROM (	SELECT   board_email,board_boardTitle,board_viewCount
-											 FROM board 	
-											 <if test="searchCondition != null">
-											 <where>
-										<if test="searchCondition == 0 and searchKeyword !='' ">
-											 board_email = #{searchKeyword}
-											</if>
-										<if test="searchCondition == 1 and searchKeyword !='' ">
-										board_boardTitle = #{searchKeyword}
-										</if>)
-												 </where> 
-											 </if> )countTable
-	</select> -->
-	
-
 
 	<insert 	id="addUser"		parameterType="user" >
       	INSERT INTO users (
@@ -262,11 +228,18 @@
 		where EMAIL= #{email:VARCHAR}
 	 </select> 
 	 
+     <!-- 이메일 중복체크 -->
+     <select id="mailCheck" parameterType="String" resultType="int">
+     	SELECT count(*)
+     	FROM users
+     	WHERE email = #{email:VARCHAR}
+     </select>
         
+     <!-- 닉네임 중복체크 -->
      <select id = "idCheck" parameterType = "String" resultType = "int">
 		SELECT count(*)
 		FROM users
-		where NICKNAME= #{nickname:VARCHAR}
+		WHERE nickname= #{nickname:VARCHAR}
 	 </select>
 
   	  	  

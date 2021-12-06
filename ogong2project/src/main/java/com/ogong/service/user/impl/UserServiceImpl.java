@@ -23,9 +23,10 @@ public class UserServiceImpl implements UserService{
 	}
 	
 	
-	  @Override public User getUser(User email) throws Exception {
-	  
-	  return userDAO.getUser(email); }
+	@Override
+	public User getUser(User email) throws Exception {
+		return userDAO.getUser(email); 
+	}
 	 
 	@Override
 	public User getProfile(String email) throws Exception {
@@ -107,7 +108,13 @@ public class UserServiceImpl implements UserService{
 		return userDAO.list(email);
 	}
 
-
+	//이메일 중복확인
+	@Override
+	public int mailCheck(String email) throws Exception {
+		// TODO Auto-generated method stub
+		return userDAO.mailCheck(email);
+	}
+	//닉네임 중복확인
 	@Override
 	public int idCheck(String nickname) throws Exception {
 		// TODO Auto-generated method stub

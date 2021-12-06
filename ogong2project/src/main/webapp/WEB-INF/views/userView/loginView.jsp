@@ -1,5 +1,5 @@
-<%@ page contentType="text/html; charset=EUC-KR" %>
-<%@ page pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page pageEncoding="UTF-8"%>
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/resources/css/adminlte.min.css">
@@ -15,30 +15,30 @@
 
 <html>
     	<script type="text/javascript">
-		//============= "·Î±×ÀÎ"  Event ¿¬°á =============
+		//============= "ë¡œê·¸ì¸"  Event ì—°ê²° =============
 		$( function() {
 	
 			
-			//==> DOM Object GET 3°¡Áö ¹æ¹ı ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			//==> DOM Object GET 3ê°€ì§€ ë°©ë²• ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
 			$("#login").on("click" , function() {
 				var email=$("input:text").val();
 				var pw=$("input:password").val();
 				
 				
 				if(email == null || email.length <1) {
-					swal('ID¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.','','warning');
+					swal('IDë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.','','warning');
 					$("#email").focus();
 					return;
 				}
 				
 				if(pw == null || pw.length <1) {
-					swal('ÆĞ½º¿öµå¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.','','warning');
+					swal('íŒ¨ìŠ¤ì›Œë“œë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.','','warning');
 					$("#password").focus();
 					return;
 				}
 				
 				$("#login_form").attr("method","POST").attr("action","loginView").attr("target","_parent").submit();
-			});
+			}); 
 		});	
 		
 		
@@ -62,6 +62,7 @@ body, table, div, p, th, td{
 <!--Coded with love by Mutiullah Samim-->
 <body>
 	<div class="container h-100">
+	
 		<div class="d-flex justify-content-center h-100">
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
@@ -70,153 +71,167 @@ body, table, div, p, th, td{
 					</div>
 				</div>
 				<div class="d-flex justify-content-center form_container">
+					<!-- ë¡œê·¸ì¸ form -->
 					<form id="login_form">
 						<div class="input-group mb-3">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							<input type="text" name="email" id="email" class="form-control input_user" value="" placeholder="email">
+							<input type="text" name="email" id="email"
+								class="form-control input_user" value="" placeholder="email">
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							<input type="password" name="password" id="password" class="form-control input_pass" value="" placeholder="password">
+							<input type="password" name="password" id="password"
+								class="form-control input_pass" value="" placeholder="password">
 						</div>
 
-							<div class="d-flex justify-content-center mt-3 login_container">
-				 	<button type="button" name="button" id="login" class="btn login_btn">Login</button>
-				 	
-				   </div>
-				   
-				   
+						<div class="d-flex justify-content-center mt-3 login_container">
+							<button type="button" name="button" id="login"
+								class="btn login_btn">Login</button>
+						</div>
 					</form>
 				</div>
-		
+
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
 						Don't have an account? 
-						<a href="#" class="ml-2" data-toggle="modal" data-target="#myModal">È¸¿ø°¡ÀÔ</a>
+						<a href="#" class="ml-2" data-toggle="modal" data-target="#myModal">íšŒì›ê°€ì…</a>
 					</div>
-					
 					<div class="d-flex justify-content-center links">
 						<a href="getPassword">Forgot your password?</a>
 					</div>
 				</div>
 				
 			</div>
-			
+			<!-- user_card End -->
 		</div>
 		
 		
-		
+		<!-- íšŒì›ê°€ì… modal -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header" style="background-color:#5bafff;">
-						<h4 class="modal-title">È¸¿ø°¡ÀÔ</h4>
+						<h4 class="modal-title">íšŒì›ê°€ì…</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
                     </div>
 					
 					<div class="modal-body">
-						
+						<!-- íšŒì›ê°€ì… form -->
 						<form id="join_form" method="post">
 							<div class="wrap">
 								<div class="mail_wrap">
-									<label for="inputEmail" class="col-lg-2 control-label">ÀÌ¸ŞÀÏ</label>
+									<label for="inputEmail" class="col-lg-2 control-label">ì´ë©”ì¼</label>
 					                <div class="col-lg-5">
 										<div class="form-control">
 											<input class="mail_input" name="email">
 										</div>
-										<span class="final_mail_ck">ÀÌ¸ŞÀÏÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.</span>
+										<span class="mail_input_re_1">ì‚¬ìš© ê°€ëŠ¥í•œ ì´ë©”ì¼ì…ë‹ˆë‹¤.</span>
+										<span class="mail_input_re_2">ì´ë©”ì¼ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤.</span>	
+										<span class="final_mail_ck">ì´ë©”ì¼ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.</span>
 										<span class="mail_input_box_warn"></span>
-										<div class="mail_check_wrap">
+										<!-- <div class="mail_check_wrap"> //ì´ë©”ì¼ ì¸ì¦ìš©
 											<input class="mail_check_input_box" id="mail_check_input_box_false" style="height:40px;">
 												
 											<div class="mail_check_button" style="width:100px;">
-												<span><input type="button" id="mail_check_button" class="btn" value="ÀÎÁõ¹øÈ£ Àü¼Û" style="background-color:#88b3fa;"></span>
+												<span><input type="button" id="mail_check_button" class="btn" value="ì¸ì¦ë²ˆí˜¸ ì „ì†¡" style="background-color:#88b3fa;"></span>
 											</div>
 											<div class="clearfix"></div>
 											<span id="mail_check_input_box_warn"></span>
-										</div>
+										</div> -->
 									</div>
 								</div>
 					 			<div class="id_wrap">
-					                <label for="inputNickname" class="col-lg-2 control-label">´Ğ³×ÀÓ</label>
+					                <label for="inputNickname" class="col-lg-2 control-label">ë‹‰ë„¤ì„</label>
 					                <div class="col-lg-5">
 										<div class="form-control">
 											<input class="id_input"  name="nickname">
 										</div>
-										<span class="id_input_re_1">»ç¿ë °¡´ÉÇÑ ´Ğ³×ÀÓÀÔ´Ï´Ù.</span>
-										<span class="id_input_re_2">´Ğ³×ÀÓÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù.</span>	
-										<span class="final_id_ck">´Ğ³×ÀÓ¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.</span>			
+										<span class="id_input_re_1">ì‚¬ìš© ê°€ëŠ¥í•œ ë‹‰ë„¤ì„ì…ë‹ˆë‹¤.</span>
+										<span class="id_input_re_2">ë‹‰ë„¤ì„ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤.</span>	
+										<span class="final_id_ck">ë‹‰ë„¤ì„ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.</span>			
 									</div>
 								</div>
 								<div class="pw_wrap">
-							        <label for="inputPassword" class="col-lg-2 control-label">ºñ¹Ğ¹øÈ£</label>
+							        <label for="inputPassword" class="col-lg-2 control-label">ë¹„ë°€ë²ˆí˜¸</label>
 					                <div class="col-lg-5">
 										<div class="form-control">
 											<input class="pw_input" type="password" name="password">
 										</div>
-										<span class="final_pw_ck">ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.</span>
+										<span class="final_pw_ck">ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.</span>
 									</div>
 								</div>
 								<div class="pwck_wrap">
-									<label for="inputPasswordCheck" class="col-lg-2 control-label">ºñ¹Ğ¹øÈ£ È®ÀÎ</label>
+									<label for="inputPasswordCheck" class="col-lg-2 control-label">ë¹„ë°€ë²ˆí˜¸ í™•ì¸</label>
 					                <div class="col-lg-5">
 										<div class="form-control">
 											<input class="pwck_input" type="password">
 										</div>
-										<span class="final_pwck_ck">ºñ¹Ğ¹øÈ£ È®ÀÎÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.</span>
-										<span class="pwck_input_re_1">ºñ¹Ğ¹øÈ£°¡ ÀÏÄ¡ÇÕ´Ï´Ù.</span>
-										<span class="pwck_input_re_2">ºñ¹Ğ¹øÈ£°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù.</span>
+										<span class="final_pwck_ck">ë¹„ë°€ë²ˆí˜¸ í™•ì¸ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.</span>
+										<span class="pwck_input_re_1">ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•©ë‹ˆë‹¤.</span>
+										<span class="pwck_input_re_2">ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.</span>
 									</div>
 								</div>
 								<br>
 								<div class="form-group">
 				                    <div class="col-lg-offset-2 col-lg-10 text-left">	
-										<input type="button" id="addBtn" class="btn" value="°¡ÀÔÇÏ±â" style="background-color:#88b3fa;">
-										<input type="button" id="cancelBtn" class="btn" value="Ãë¼Ò" data-dismiss="modal" style="background-color:#88b3fa;">
+										<input type="button" id="addBtn" class="btn" value="ê°€ì…í•˜ê¸°" style="background-color:#88b3fa;">
+										<input type="button" id="cancelBtn" class="btn" value="ì·¨ì†Œ" data-dismiss="modal" style="background-color:#88b3fa;">
 									</div>
 								</div>
 							</div>
-						</form>
-						
+						</form>	
 					</div>
+					<!-- modal-body End -->
 				</div>
+				<!-- modal content End -->
 			</div>
 		</div>
-		
-		
+		<!-- íšŒì›ê°€ì… modal End -->
 		
 	</div>
+	<!--  container End -->
 </body>
 
 <script>
 
-	var code = "";				//ÀÌ¸ŞÀÏÀü¼Û ÀÎÁõ¹øÈ£ ÀúÀåÀ§ÇÑ ÄÚµå
+	 var code = "";				//ì´ë©”ì¼ì „ì†¡ ì¸ì¦ë²ˆí˜¸ ì €ì¥ìœ„í•œ ì½”ë“œ
 	
-	 /* À¯È¿¼º °Ë»ç Åë°úÀ¯¹« º¯¼ö */
-	 var idCheck = false;			// ¾ÆÀÌµğ
-	 var idckCheck = false;			// ¾ÆÀÌµğ Áßº¹ °Ë»ç
-	 var pwCheck = false;			// ºñ¹ø
-	 var pwckCheck = false;			// ºñ¹ø È®ÀÎ
-	 var pwckcorCheck = false;		// ºñ¹ø È®ÀÎ ÀÏÄ¡ È®ÀÎ
-	 var mailCheck = false;			// ÀÌ¸ŞÀÏ
-	 var mailnumCheck = false;		// ÀÌ¸ŞÀÏ ÀÎÁõ¹øÈ£ È®ÀÎ
+	 /* ìœ íš¨ì„± ê²€ì‚¬ í†µê³¼ìœ ë¬´ ë³€ìˆ˜ */
+	 var idCheck = false;			// ì•„ì´ë””
+	 var idckCheck = false;			// ì•„ì´ë”” ì¤‘ë³µ ê²€ì‚¬
+	 var pwCheck = false;			// ë¹„ë²ˆ
+	 var pwckCheck = false;			// ë¹„ë²ˆ í™•ì¸
+	 var pwckcorCheck = false;		// ë¹„ë²ˆ í™•ì¸ ì¼ì¹˜ í™•ì¸
+	 var mailCheck = false;			// ì´ë©”ì¼
+	 var mailckCheck = false;       // ì´ë©”ì¼ ì¤‘ë³µ ê²€ì‚¬
+	 //var mailnumCheck = false;		// ì´ë©”ì¼ ì¸ì¦ë²ˆí˜¸ í™•ì¸
 	
 	$(document).ready(function(){
-		//È¸¿ø°¡ÀÔ ¹öÆ°(È¸¿ø°¡ÀÔ ±â´É ÀÛµ¿)
+		//íšŒì›ê°€ì… ë²„íŠ¼(íšŒì›ê°€ì… ê¸°ëŠ¥ ì‘ë™)
 		$("#addBtn").click(function(){
 	
-			/* ÀÔ·Â°ª º¯¼ö */
-			var id = $('.id_input').val(); 				// id ÀÔ·Â¶õ
-			var pw = $('.pw_input').val();				// ºñ¹Ğ¹øÈ£ ÀÔ·Â¶õ
-			var pwck = $('.pwck_input').val();			// ºñ¹Ğ¹øÈ£ È®ÀÎ ÀÔ·Â¶õ
-			var mail = $('.mail_input').val();			// ÀÌ¸ŞÀÏ ÀÔ·Â¶õ
+			/* ì…ë ¥ê°’ ë³€ìˆ˜ */
+			var mail = $('.mail_input').val();			// ì´ë©”ì¼ ì…ë ¥ë€
+			var id = $('.id_input').val(); 				// id ì…ë ¥ë€
+			var pw = $('.pw_input').val();				// ë¹„ë°€ë²ˆí˜¸ ì…ë ¥ë€
+			var pwck = $('.pwck_input').val();			// ë¹„ë°€ë²ˆí˜¸ í™•ì¸ ì…ë ¥ë€
 			
-			/* ¾ÆÀÌµğ À¯È¿¼º°Ë»ç */
+			
+			/* ì´ë©”ì¼ ìœ íš¨ì„± ê²€ì‚¬ */
+			if(mail == ""){
+				$('.final_mail_ck').css('display','block');
+				mailCheck = false;
+			}else{
+				$('.final_mail_ck').css('display', 'none');
+				mailCheck = true;
+			}
+			
+			/* ì•„ì´ë”” ìœ íš¨ì„±ê²€ì‚¬ */
 			if(id == ""){
 				$('.final_id_ck').css('display','block');
 				idCheck = false;
@@ -225,7 +240,7 @@ body, table, div, p, th, td{
 				idCheck = true;
 			}
 			
-			/* ºñ¹Ğ¹øÈ£ À¯È¿¼º °Ë»ç */
+			/* ë¹„ë°€ë²ˆí˜¸ ìœ íš¨ì„± ê²€ì‚¬ */
 			if(pw == ""){
 				$('.final_pw_ck').css('display','block');
 				pwCheck = false;
@@ -234,7 +249,7 @@ body, table, div, p, th, td{
 				pwCheck = true;
 			}
 			
-			/* ºñ¹Ğ¹øÈ£ È®ÀÎ À¯È¿¼º °Ë»ç */
+			/* ë¹„ë°€ë²ˆí˜¸ í™•ì¸ ìœ íš¨ì„± ê²€ì‚¬ */
 			if(pwck == ""){
 				$('.final_pwck_ck').css('display','block');
 				pwckCheck = false;
@@ -243,43 +258,72 @@ body, table, div, p, th, td{
 				pwckCheck = true;
 			}
 	
-			/* ÀÌ¸ŞÀÏ À¯È¿¼º °Ë»ç */
-			if(mail == ""){
-				$('.final_mail_ck').css('display','block');
-				mailCheck = false;
-			}else{
-				$('.final_mail_ck').css('display', 'none');
-				mailCheck = true;
-			}		
 			
-			/* ÃÖÁ¾ À¯È¿¼º °Ë»ç */
-			if(idCheck&&idckCheck&&pwCheck&&pwckCheck&&pwckcorCheck&&mailCheck&&mailnumCheck ){
-	
+			/* ìµœì¢… ìœ íš¨ì„± ê²€ì‚¬ */
+			if(idCheck&&idckCheck&&pwCheck&&pwckCheck&&pwckcorCheck&&mailCheck ){
 				$("#join_form").attr("action", "/user/addUser");
 				$("#join_form").submit();		
-				
 			}else{
-				swal("ÇÊ¼ö Á¤º¸¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä","","warning");
+				swal("í•„ìˆ˜ ì •ë³´ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”","","warning");
 				return false;
 			}	
 
 		});
 	});
 	
-	//´Ğ³×ÀÓ Áßº¹°Ë»ç
+	//ì´ë©”ì¼ ì¤‘ë³µê²€ì‚¬
+	$('.mail_input').on("propertychange change keyup paste input", function(){
+	
+		/* console.log("keyup í…ŒìŠ¤íŠ¸"); */
+		
+		var email = $('.mail_input').val();			// .id_inputì— ì…ë ¥ë˜ëŠ” ê°’
+		var data = {email : email}				// 'ì»¨íŠ¸ë¡¤ì— ë„˜ê¸¸ ë°ì´í„° ì´ë¦„' : 'ë°ì´í„°(.mail_inputì— ì…ë ¥ë˜ëŠ” ê°’)'
+		var warnMsg = $(".mail_input_box_warn");	// ì´ë©”ì¼ ì…ë ¥ ê²½ê³ ê¸€
+		
+		// ì´ë©”ì¼ í˜•ì‹ ìœ íš¨ì„± ê²€ì‚¬
+		if(mailFormCheck(email)){
+			//warnMsg.html("ì´ë©”ì¼ì´ ì „ì†¡ ë˜ì—ˆìŠµë‹ˆë‹¤. ì´ë©”ì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.");
+			warnMsg.css("display", "none");
+		} else {
+			warnMsg.html("ì˜¬ë°”ë¥´ì§€ ëª»í•œ ì´ë©”ì¼ í˜•ì‹ì…ë‹ˆë‹¤.");
+			warnMsg.css("display", "inline-block");
+			return false;
+		}
+		
+		$.ajax({
+			type : "post",
+			url : "/user/mailCheck",
+			data : data,
+			success : function(result){
+				// console.log("ì„±ê³µ ì—¬ë¶€" + result);
+				if(result != 'fail'){
+					$('.mail_input_re_1').css("display","inline-block");
+					$('.mail_input_re_2').css("display", "none")	;	
+					mailckCheck = true;
+				} else {
+					$('.mail_input_re_2').css("display","inline-block");
+					$('.mail_input_re_1').css("display", "none");
+					mailckCheck = false;
+				}	
+			}// success ì¢…ë£Œ
+		}); // ajax ì¢…ë£Œ	
+	
+	});// function ì¢…ë£Œ
+	 
+	//ë‹‰ë„¤ì„ ì¤‘ë³µê²€ì‚¬
 	$('.id_input').on("propertychange change keyup paste input", function(){
 	
-		/* console.log("keyup Å×½ºÆ®"); */
+		/* console.log("keyup í…ŒìŠ¤íŠ¸"); */
 		
-		var nickname = $('.id_input').val();			// .id_input¿¡ ÀÔ·ÂµÇ´Â °ª
-		var data = {nickname : nickname}				// 'ÄÁÆ®·Ñ¿¡ ³Ñ±æ µ¥ÀÌÅÍ ÀÌ¸§' : 'µ¥ÀÌÅÍ(.id_input¿¡ ÀÔ·ÂµÇ´Â °ª)'
+		var nickname = $('.id_input').val();			// .id_inputì— ì…ë ¥ë˜ëŠ” ê°’
+		var data = {nickname : nickname}				// 'ì»¨íŠ¸ë¡¤ì— ë„˜ê¸¸ ë°ì´í„° ì´ë¦„' : 'ë°ì´í„°(.id_inputì— ì…ë ¥ë˜ëŠ” ê°’)'
 		
 		$.ajax({
 			type : "post",
 			url : "/user/idCheck",
 			data : data,
 			success : function(result){
-				// console.log("¼º°ø ¿©ºÎ" + result);
+				// console.log("ì„±ê³µ ì—¬ë¶€" + result);
 				if(result != 'fail'){
 					$('.id_input_re_1').css("display","inline-block");
 					$('.id_input_re_2').css("display", "none");	
@@ -289,25 +333,25 @@ body, table, div, p, th, td{
 					$('.id_input_re_1').css("display", "none");
 					idckCheck = false;
 				}	
-			}// success Á¾·á
-		}); // ajax Á¾·á	
+			}// success ì¢…ë£Œ
+		}); // ajax ì¢…ë£Œ	
 	
-	});// function Á¾·á
+	});// function ì¢…ë£Œ
 	
-	/* ÀÎÁõ¹øÈ£ ÀÌ¸ŞÀÏ Àü¼Û */
-	$("#mail_check_button").click(function(){
+	/* ì¸ì¦ë²ˆí˜¸ ì´ë©”ì¼ ì „ì†¡ */
+	/* $("#mail_check_button").click(function(){
 		
-		var email = $(".mail_input").val();			// ÀÔ·ÂÇÑ ÀÌ¸ŞÀÏ
-		var cehckBox = $(".mail_check_input_box");		// ÀÎÁõ¹øÈ£ ÀÔ·Â¶õ
-		var boxWrap = $(".mail_check_input_box");	// ÀÎÁõ¹øÈ£ ÀÔ·Â¶õ ¹Ú½º
-		var warnMsg = $(".mail_input_box_warn");	// ÀÌ¸ŞÀÏ ÀÔ·Â °æ°í±Û
+		var email = $(".mail_input").val();			// ì…ë ¥í•œ ì´ë©”ì¼
+		var cehckBox = $(".mail_check_input_box");		// ì¸ì¦ë²ˆí˜¸ ì…ë ¥ë€
+		var boxWrap = $(".mail_check_input_box");	// ì¸ì¦ë²ˆí˜¸ ì…ë ¥ë€ ë°•ìŠ¤
+		var warnMsg = $(".mail_input_box_warn");	// ì´ë©”ì¼ ì…ë ¥ ê²½ê³ ê¸€
 		
-		/* ÀÌ¸ŞÀÏ Çü½Ä À¯È¿¼º °Ë»ç */
+		// ì´ë©”ì¼ í˜•ì‹ ìœ íš¨ì„± ê²€ì‚¬
 		if(mailFormCheck(email)){
-			warnMsg.html("ÀÌ¸ŞÀÏÀÌ Àü¼Û µÇ¾ú½À´Ï´Ù. ÀÌ¸ŞÀÏÀ» È®ÀÎÇØÁÖ¼¼¿ä.");
+			warnMsg.html("ì´ë©”ì¼ì´ ì „ì†¡ ë˜ì—ˆìŠµë‹ˆë‹¤. ì´ë©”ì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.");
 			warnMsg.css("display", "inline-block");
 		} else {
-			warnMsg.html("¿Ã¹Ù¸£Áö ¸øÇÑ ÀÌ¸ŞÀÏ Çü½ÄÀÔ´Ï´Ù.");
+			warnMsg.html("ì˜¬ë°”ë¥´ì§€ ëª»í•œ ì´ë©”ì¼ í˜•ì‹ì…ë‹ˆë‹¤.");
 			warnMsg.css("display", "inline-block");
 			return false;
 		}	
@@ -327,28 +371,28 @@ body, table, div, p, th, td{
 					
 		});
 		
-	});
+	}); */
 	
-	/* ÀÎÁõ¹øÈ£ ºñ±³ */
-	$(".mail_check_input_box").blur(function(){
+	/* ì¸ì¦ë²ˆí˜¸ ë¹„êµ */
+	/* $(".mail_check_input_box").blur(function(){
 		
-		var inputCode = $(".mail_check_input_box").val();		// ÀÔ·ÂÄÚµå	
-		var checkResult = $("#mail_check_input_box_warn");	// ºñ±³ °á°ú 	
+		var inputCode = $(".mail_check_input_box").val();		// ì…ë ¥ì½”ë“œ	
+		var checkResult = $("#mail_check_input_box_warn");	// ë¹„êµ ê²°ê³¼ 	
 		
-		if(inputCode == code){							// ÀÏÄ¡ÇÒ °æ¿ì
-			checkResult.html("ÀÎÁõ¹øÈ£°¡ ÀÏÄ¡ÇÕ´Ï´Ù.");
+		if(inputCode == code){							// ì¼ì¹˜í•  ê²½ìš°
+			checkResult.html("ì¸ì¦ë²ˆí˜¸ê°€ ì¼ì¹˜í•©ë‹ˆë‹¤.");
 			checkResult.attr("class", "correct");		
 			mailnumCheck = true;
-		} else {											// ÀÏÄ¡ÇÏÁö ¾ÊÀ» °æ¿ì
-			checkResult.html("ÀÎÁõ¹øÈ£¸¦ ´Ù½Ã È®ÀÎÇØÁÖ¼¼¿ä.");
+		} else {											// ì¼ì¹˜í•˜ì§€ ì•Šì„ ê²½ìš°
+			checkResult.html("ì¸ì¦ë²ˆí˜¸ë¥¼ ë‹¤ì‹œ í™•ì¸í•´ì£¼ì„¸ìš”.");
 			checkResult.attr("class", "incorrect");
 			mailnumCheck = false;
 		}	
 		
-	});
+	}); */
 	
 	
-	/* ºñ¹Ğ¹øÈ£ È®ÀÎ ÀÏÄ¡ À¯È¿¼º °Ë»ç */
+	/* ë¹„ë°€ë²ˆí˜¸ í™•ì¸ ì¼ì¹˜ ìœ íš¨ì„± ê²€ì‚¬ */
 	
 	$('.pwck_input').on("propertychange change keyup paste input", function(){
 		
@@ -357,8 +401,8 @@ body, table, div, p, th, td{
 		$('.final_pwck_ck').css('display', 'none');
 		
 		if(pw == pwck){
-			$('.pwck_input_re_1').css('display','block');
-			$('.pwck_input_re_2').css('display','none');
+			$('.pwck_input_re_1').css('display','block'); //ë³´ì„
+			$('.pwck_input_re_2').css('display','none');  //ì•ˆë³´ì„
 			pwckcorCheck = true;
 		}else{
 			$('.pwck_input_re_1').css('display','none');
@@ -369,7 +413,7 @@ body, table, div, p, th, td{
 		
 	});
 	
-	 /* ÀÔ·Â ÀÌ¸ŞÀÏ Çü½Ä À¯È¿¼º °Ë»ç */
+	 /* ì…ë ¥ ì´ë©”ì¼ í˜•ì‹ ìœ íš¨ì„± ê²€ì‚¬ */
 	 function mailFormCheck(email){
 		var form = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
 		return form.test(email);

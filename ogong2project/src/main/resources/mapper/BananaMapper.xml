@@ -127,20 +127,20 @@
 	</select>	 -->
 	
 
-	<update id="updateAcquireBanana" parameterType="user">
+	<update id="updateAcquireBanana" parameterType="banana">
 		UPDATE users
 		
-		SET	banana_count = BANANA_COUNT + #{bananaCount:NUMERIC}
+		SET	banana_count = BANANA_COUNT + #{bananaAmount:NUMERIC}
 		
-		WHERE email = #{email:VARCHAR}
+		WHERE email = #{bananaEmail.email:VARCHAR}
 	</update>	
 	
-	<update id="updateUseBanana" parameterType="user">
+	<update id="updateUseBanana" parameterType="banana">
 		UPDATE users
 		<set>
-			banana_count = banana_count - #{bananaCount:NUMERIC}
+			banana_count = banana_count - #{bananaAmount:NUMERIC}
 		</set>
-		WHERE email = #{email:VARCHAR}
+		WHERE email = #{bananaEmail.email:VARCHAR}
 	</update>
 	
 	<delete id="deleteBanana" parameterType="int">

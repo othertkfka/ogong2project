@@ -1,4 +1,4 @@
-package com.ogong.contoller.learningHistory;
+package com.ogong.controller.learningHistory;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;

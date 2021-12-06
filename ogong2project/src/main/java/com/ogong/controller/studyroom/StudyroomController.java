@@ -1,4 +1,4 @@
-package com.ogong.contoller.studyroom;
+package com.ogong.controller.studyroom;
 
 import java.io.File;
 import java.io.IOException;

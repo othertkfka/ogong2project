@@ -26,6 +26,7 @@
 		
 		bsCustomFileInput.init();
 		
+		//개설하기 버튼 클릭시
 		$("#create").on("click", function(){
 			
 			if($("#studyName").val() == ""){
@@ -155,7 +156,7 @@
 	$.datepicker.setDefaults($.datepicker.regional['ko']);
 	
 	
-	
+	//해시태그 생성
     $(function () {
         var tag = {};
         var counter = 0;
@@ -223,9 +224,8 @@
 	})
 	
 	
-	
+	//파일 미리보기
 	var sel_file;
- 
     $(function() {
         $("#file").on("change", handleImgFileSelect);
     }); 

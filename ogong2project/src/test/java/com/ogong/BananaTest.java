@@ -1,15 +1,9 @@
 package com.ogong;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ogong.common.Search;
 import com.ogong.service.banana.BananaService;
 import com.ogong.service.domain.Banana;
 import com.ogong.service.domain.User;
@@ -42,11 +36,6 @@ public class BananaTest {
 		System.out.println("1");
 		bananaService.addBanana(banana);
 		
-		user.setBananaCount(5);
-		System.out.println("2");
-		bananaService.updateAcquireBanana(user);
-		
-		
 	}
 	
 	//@Test
@@ -65,10 +54,6 @@ public class BananaTest {
 		banana.setBananaCategory("2");
 		
 		bananaService.addBanana(banana);
-		
-		user.setBananaCount(-20);
-		bananaService.updateUseBanana(user);
-		
 		
 	}	
 	
@@ -133,18 +118,5 @@ public class BananaTest {
 		System.out.println("================================");		
 		
 	}*/
-	
-	
-	//@Test
-	@DisplayName("바나나 획득")
-	void updateAcquireBanana() throws Exception{
-		
-		User user = new User();
-		user.setEmail("user01");
-		user.setBananaCount(-100);
-		
-		bananaService.updateAcquireBanana(user);
-		
-	}
 	
 }

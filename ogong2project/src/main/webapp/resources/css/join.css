@@ -156,6 +156,17 @@ font-family: 'Do Hyeon', sans-serif;
 	border:none;
 	font-size:28px;
 }
+	/* 중복이메일이 존재하지 않는경우 */
+	.mail_input_re_1{
+		color : green;
+		display : none;
+	}
+	/* 중복이메일이 존재하는 경우 */
+	.mail_input_re_2{
+		color : red;
+		display : none;
+	}
+	
 .mail_check_wrap{
 	margin-top: 20px;	
 }

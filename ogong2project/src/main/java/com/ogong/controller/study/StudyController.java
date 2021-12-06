@@ -39,11 +39,15 @@ import com.ogong.service.learningHistory.LearningHistoryService;
 import com.ogong.service.study.CamStudyService;
 import com.ogong.service.study.StudyService;
 import com.ogong.service.studyroom.StudyroomService;
+import com.ogong.service.user.UserService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 @RequestMapping("/study/*")
 public class StudyController {
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private StudyService studyService;
@@ -73,10 +77,12 @@ public class StudyController {
 	}
 	
 	@GetMapping("addStudy")
-	public String addStudy(@RequestParam("studyType") String studyType, Model model) throws Exception{
+	public String addStudy(@RequestParam("studyType") String studyType, HttpSession session, Model model) throws Exception{
 		
 		System.out.println("/studyController/addStudy : GET");
 		
+		User user = userService.getProfile(((User)session.getAttribute("user")).getEmail());		
+		model.addAttribute("user", user);
 		model.addAttribute("studyType", studyType);
 		
 		return "/studyView/addStudy";
@@ -93,7 +99,6 @@ public class StudyController {
 		study.setStudyMaker(user);
 		
 		//바나나
-		User bananaUser = new User();
 		Banana banana = new Banana();
 		if(study.getStudyRoomGrade().equals("basic")) {
 			banana.setBananaEmail(user);
@@ -101,20 +106,12 @@ public class StudyController {
 			banana.setBananaHistory("Basic 등급 스터디 개설로 인한 바나나 소모 ");
 			banana.setBananaCategory("2");
 			bananaService.addBanana(banana);
-			bananaUser.setEmail(user.getEmail());
-			bananaUser.setBananaCount(20);
-			bananaService.updateUseBanana(bananaUser);
-			user.setBananaCount(user.getBananaCount()-20);
 		}else if(study.getStudyRoomGrade().equals("premium")) {
 			banana.setBananaEmail(user);
 			banana.setBananaAmount(-50);
 			banana.setBananaHistory("Premium 등급 스터디 개설로 인한 바나나 소모 ");
 			banana.setBananaCategory("2");
 			bananaService.addBanana(banana);
-			bananaUser.setEmail(user.getEmail());
-			bananaUser.setBananaCount(50);
-			bananaService.updateUseBanana(bananaUser);
-			user.setBananaCount(user.getBananaCount()-50);
 		}
 		//파일 업로드
 		if(file.getOriginalFilename().equals("")) {    //파일 선택안했을때
@@ -245,9 +242,6 @@ public class StudyController {
 					banana.setBananaHistory("목표시간 완료로 인한 바나나 적립");
 					banana.setBananaCategory("1");
 					bananaService.addBanana(banana);
-					//회원 바나나 업데이트
-					user.setBananaCount(10);
-					bananaService.updateAcquireBanana(user);
 					//목표시간 완료 알림처리
 					notice.setNoticeUser(user);
 					notice.setNoticeCategory("6");

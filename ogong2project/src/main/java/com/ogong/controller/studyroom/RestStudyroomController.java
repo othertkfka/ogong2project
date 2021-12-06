@@ -1,4 +1,4 @@
-package com.ogong.contoller.studyroom;
+package com.ogong.controller.studyroom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,10 +99,6 @@ public class RestStudyroomController {
 			banana.setBananaHistory("출석체크로 인한 바나나 적립");
 			banana.setBananaCategory("1");
 			bananaService.addBanana(banana);
-			bananaUser.setEmail(user.getEmail());
-			bananaUser.setBananaCount(5);
-			bananaService.updateAcquireBanana(bananaUser);
-			user.setBananaCount(user.getBananaCount()-5);
 			
 			list = studyroomService.getAttendanceList(map);
 			

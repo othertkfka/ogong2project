@@ -6,12 +6,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.ogong.common.Search;
 import com.ogong.service.banana.BananaMapper;
 import com.ogong.service.banana.BananaService;
 import com.ogong.service.domain.Banana;
-import com.ogong.service.domain.Report;
 import com.ogong.service.domain.User;
 
 @Service
@@ -21,11 +20,19 @@ public class BananaServiceImpl implements BananaService{
 	BananaMapper bananaMapper;
 
 	
+	@Transactional
 	@Override
 	public void addBanana(Banana banana) throws Exception {
 
 		bananaMapper.addBanana(banana);
 		
+		if(banana.getBananaAmount() > 0) {
+			//바나나 획득
+			bananaMapper.updateAcquireBanana(banana);
+		} else {
+			//바나나 차감
+			bananaMapper.updateUseBanana(banana);
+		}
 	}
 
 	@Override
@@ -39,20 +46,6 @@ public class BananaServiceImpl implements BananaService{
 		result.put("totalCount", new Integer(totalCount));
 		
 		return result;
-		
-	}
-
-	@Override
-	public void updateUseBanana(User user) throws Exception {
-
-		bananaMapper.updateUseBanana(user);
-		
-	}
-	
-	@Override
-	public void updateAcquireBanana(User user) throws Exception {
-
-		bananaMapper.updateAcquireBanana(user);
 		
 	}
 	

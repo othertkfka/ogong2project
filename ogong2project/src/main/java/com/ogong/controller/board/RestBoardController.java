@@ -94,8 +94,6 @@ public class RestBoardController {
 		banana.setBananaHistory("Q&A 게시글 채택으로 인한 바나나 적립");
 		banana.setBananaCategory("1");
 		bananaService.addBanana(banana);
-		user.setBananaCount(boardRegBanana);
-		bananaService.updateAcquireBanana(user);
 
 		boardService.updateAdoption(answerNo);
 		boardService.updateBoardAdoption(boardNo);

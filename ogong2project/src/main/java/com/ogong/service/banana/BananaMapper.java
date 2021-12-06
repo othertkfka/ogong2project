@@ -2,12 +2,10 @@ package com.ogong.service.banana;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
-import com.ogong.common.Search;
 import com.ogong.service.domain.Banana;
 import com.ogong.service.domain.User;
 
@@ -22,10 +20,10 @@ public interface BananaMapper {
 	List<Banana> getlistBanana(HashMap<String, Object> map);
 	
 	//바나나 +획득
-	void updateAcquireBanana(User user);
+	void updateAcquireBanana(Banana banana);
 	
 	//바나나 -차감
-	void updateUseBanana(User user);
+	void updateUseBanana(Banana banana);
 	
 	//바나나 리스트 삭제
 	public void deleteBanana(int bananaNo);
